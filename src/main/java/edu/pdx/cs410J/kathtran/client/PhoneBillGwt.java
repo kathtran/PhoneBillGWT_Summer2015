@@ -62,43 +62,60 @@ public class PhoneBillGwt implements EntryPoint {
         rootPanel.add(navBar);
     }
 
-    private HTML readme() {
-        return new HTML("<h1><u>README - Phone Bill Application</u></h1>" +
-                "<h3><u>Introduction</u></h3>" +
-                "<p><b>v1.0</b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Welcome to the Phone Bill Application! This is " +
-                "a command-line application that allows the user to model a phone bill. In this version, the user may " +
-                "associate at most one phone record per customer name. However, the information will not be stored " +
-                "between each usage. A single phone record consists of the phone umber of the caller, the phone number " +
-                "that was called, the time at which the call began, and the time at which the call ended.<br>" +
-                "<b>v2.0</b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The program now allows the user to save his or her phone bill " +
-                "to an external text file (both new and existing). Users may also load phone bill records from existing " +
-                "files. Each file correlates to a single user and his or her phone call(s).<br>" +
-                "<b>v3.0</b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The newest feature that has been added is the option to have " +
-                "the phone bill be printed out in a more user-friendly format, to either a separate text file or to " +
-                "standard out, complete with the duration of each phone call in minutes. Phone calls within the phone " +
-                "bills are now listed chronologically by their beginning time, with the phone numbers serving as tie-" +
-                "breakers in appropriate cases. In addition, time stamps are no longer recordered in 24-hour time.<br>" +
-                "<b>v4.0</b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;A server/client has been established for this version using " +
-                "REST to incorporate a web service to the program. Users may add phone bills to the server and search " +
-                "for phone calls belonging to some given phone bill between some given time span.<br>" +
-                "<b>v5.0</b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;A web-based user interface using Google Web Toolkit has been " +
-                "implemented to support all previous features associated with this phone bill application.<br></p>" +
-                "<h3><u>Functionalities</u></h3>" +
-                "<p><b>Add</b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Add a new phone call to some specified customer's phone bill " +
-                "by supplying the customer name, caller number, callee number, call start time, and call end time.<br>" +
-                "<b>Print</b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Choose from two options: (1) print the most recently added " +
-                "phone call, or (2) print all of the phone call records that belong to some specified customer.<br>" +
-                "<b>Search</b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Search for all existing phone call records that fall under " +
-                "some starting time and some ending time.</p>" +
-                "<h3><u>Arguments</u></h3>" +
-                "<p><table style=\"width:100%\"><tr><td><b>[customer]</b></td><td>Person whose phone bill we're modelling</td></tr>" +
-                "<tr><td><b>[caller number]</b></td><td>Phone number of the caller</td></tr>" +
-                "<tr><td><b>[callee number]</b></td><td>Phone number of the person called</td></tr>" +
-                "<tr><td><b>[start time]</b></td><td>Date and time the call began</td></tr>" +
-                "<tr><td><b>[end time]</b></td><td>Date and time the call ended</td></tr>" +
-                "<tr><td colspan=\"2\">The customer may contain symbols and consist of more than one word. Phone numbers must be of the form " +
-                "nnn-nnn-nnnn where n is a number 0-9. Date and time should be in the format: mm/dd/yyyy hh:mm [am/pm] " +
-                "and zeroes may be omitted where appropriate.</td></tr></table></p>" +
-                "<h5><i>CS410J Project 5: A Rich Internet Application for a Phone Bill<br>&copy; Kathleen Tran 2015</i></h5>");
+    /**
+     * The README file equivalent for the CS410J Phone Bill Application.
+     *
+     * @return the README formatted in HTML
+     */
+    protected HTML readme() {
+        return new HTML("<p><table width=\"600\"><col width=\"150\"><tr><td colspan=\"2\" align=\"center\">" +
+                "<h1><u>README - Phone Bill Application</u></h1></td></tr>" +
+                "<tr><td><h3><u>Introduction</u></h3></td></tr>" +
+                "<tr><td valign=\"top\"><b>v1.0</b></td><td>Welcome to the Phone Bill Application! This is a " +
+                "command-line application that allows the user to model a phone bill. In this version, the user " +
+                "may associate at most one phone record per customer name. However, the information will not be " +
+                "stored between each usage. A single phone record consists of the phone number of the caller, the " +
+                "phone number that was called, the time at which the call began, and the time at which the call " +
+                "ended.</td></tr>" +
+                "<tr><td valign=\"top\"><b>v2.0</b></td><td>The program now allows the user to save his or her " +
+                "phone bill to an external text file (both new and existing). Users may also load phone bill " +
+                "records from existing files. Each file correlates to a single user and his or her phone " +
+                "call(s).</td></tr>" +
+                "<tr><td valign=\"top\"><b>v3.0</b></td><td>The newest feature that has been added is the option " +
+                "to have the phone bill be printed out in a more user-friendly format, to either a separate text " +
+                "file or to standard out, complete with the duration of each phone call in minutes. Phone calls " +
+                "within the phone bills are now listed chronologically by their beginning time, with the phone " +
+                "numbers serving as tie-breakers in appropriate cases. In addition, time stamps are no longer " +
+                "recorded in 24-hour time.</td></tr>" +
+                "<tr><td valign=\"top\"><b>v4.0</b></td><td>A server/client has been established for this version " +
+                "using REST to incorporate a web service to the program. Users may add phone bills to the server " +
+                "and search for phone calls belonging to some given phone bill between some given time " +
+                "span.</td></tr>" +
+                "<tr><td valign=\"top\"><b>v5.0</b></td><td>A web-based user interface using Google Web Toolkit " +
+                "has been implemented to support all previous features associated with this phone bill " +
+                "application.</td></tr>" +
+
+                "<tr><td colspan=\"2\"><h3><u>Functionalities</u></h3></td></tr>" +
+                "<tr><td><b>Add</b></td><td>Add a new phone call to some specified " +
+                "customer's phone bill by supplying the customer name, caller number, callee number, call start " +
+                "time, and call end time.</td></tr>" +
+                "<tr><td><b>Print</b></td><td>Choose from two options: (1) print the most recently added phone " +
+                "call, or (2) print all of the phone call records that belong to some specified customer.</td></tr>" +
+                "<tr><td><b>Search</b></td><td>Search for all existing phone call records that fall under " +
+                "some starting time and some ending time.</td></tr>" +
+
+                "<tr><td colspan=\"2\"><h3><u>Arguments</u></h3></td></tr>" +
+                "<tr><td valign=\"top\"><b>[customer]</b></td><td valign=\"top\">Person whose phone bill we're modelling</td></tr>" +
+                "<tr><td valign=\"top\"><b>[caller number]</b></td><td valign=\"top\">Phone number of the caller</td></tr>" +
+                "<tr><td valign=\"top\"><b>[callee number]</b></td><td valign=\"top\">Phone number of the person called</td></tr>" +
+                "<tr><td valign=\"top\"><b>[start time]</b></td><td valign=\"top\">Date and time the call began</td></tr>" +
+                "<tr><td valign=\"top\"><b>[end time]</b></td><td valign=\"top\">Date and time the call ended</td></tr>" +
+                "<tr><td colspan=\"2\"><br>The customer may contain symbols and consist of more than one word. " +
+                "Phone numbers must be of the form nnn-nnn-nnnn where n is a number 0-9. Date and time should be " +
+                "in the format: mm/dd/yyyy hh:mm [am/pm] and zeroes may be omitted where " +
+                "appropriate.</td></tr>" +
+
+                "<tr><td colspan=\"2\" align=\"center\"><h5><i>CS410J Project 5: A Rich Internet Application for a Phone Bill</i></h5></td></tr>" +
+                "<tr><td colspan=\"2\" align=\"center\">&copy; Kathleen Tran Summer 2015</td></tr></table></p>");
     }
 }
