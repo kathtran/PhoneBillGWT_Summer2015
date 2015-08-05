@@ -96,12 +96,12 @@ public class PhoneBillGwt implements EntryPoint {
                 "application.</td></tr>" +
 
                 "<tr><td colspan=\"2\"><h3><u>Functionalities</u></h3></td></tr>" +
-                "<tr><td><b>Add</b></td><td>Add a new phone call to some specified " +
+                "<tr><td valign=\"top\"><b>Add</b></td><td>Add a new phone call to some specified " +
                 "customer's phone bill by supplying the customer name, caller number, callee number, call start " +
                 "time, and call end time.</td></tr>" +
-                "<tr><td><b>Print</b></td><td>Choose from two options: (1) print the most recently added phone " +
+                "<tr><td valign=\"top\"><b>Print</b></td><td>Choose from two options: (1) print the most recently added phone " +
                 "call, or (2) print all of the phone call records that belong to some specified customer.</td></tr>" +
-                "<tr><td><b>Search</b></td><td>Search for all existing phone call records that fall under " +
+                "<tr><td valign=\"top\"><b>Search</b></td><td>Search for all existing phone call records that fall under " +
                 "some starting time and some ending time.</td></tr>" +
 
                 "<tr><td colspan=\"2\"><h3><u>Arguments</u></h3></td></tr>" +
