@@ -6,6 +6,7 @@ import edu.pdx.cs410J.AbstractPhoneBill;
 import java.lang.Override;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 
 /**
  * Implements the abstract methods that can be found within the
@@ -39,4 +40,107 @@ public class PhoneBill extends AbstractPhoneBill {
     public Collection getPhoneCalls() {
         return this.calls;
     }
+
+//    /**
+//     * The customer's name. May consist of one or more words,
+//     * and be comprised of any character, symbol, or number.
+//     */
+//    private String customer;
+//
+//    /**
+//     * All phone call records that are associated with the
+//     * customer. Each record, or item, is an instance of the
+//     * {@link PhoneCall} class.
+//     */
+//    private ArrayList phoneCalls;
+//
+//    /**
+//     * Default constructor.
+//     */
+//    public PhoneBill() {
+//        this.customer = null;
+//        this.phoneCalls = new ArrayList<PhoneCall>();
+//    }
+//
+//    /**
+//     * Constructor that specifies the customer's name.
+//     *
+//     * @param customer a name that may consist of one or more
+//     *                 words, as some String
+//     */
+//    public PhoneBill(String customer) {
+//        this.customer = customer;
+//        this.phoneCalls = new ArrayList<PhoneCall>();
+//    }
+//
+//    /**
+//     * @return the name of the customer whose phone bill this is
+//     */
+//    @Override
+//    public String getCustomer() {
+//        return this.customer;
+//    }
+//
+//    /**
+//     * Adds a phone call record to this phone bill.
+//     *
+//     * @param call an instance of the {@link PhoneCall} class that
+//     *             contains the caller's phone number, callee's phone
+//     *             number, and start and end times of the call
+//     */
+//    @Override
+//    public void addPhoneCall(AbstractPhoneCall call) {
+//        this.phoneCalls.add(call);
+//    }
+//
+//    /**
+//     * @return all of the phone calls (as instances of {@link
+//     * AbstractPhoneCall}) in this phone bill
+//     */
+//    @Override
+//    public Collection getPhoneCalls() {
+//        return this.phoneCalls;
+//    }
+//
+//    /**
+//     * Gets the call record for the most recent phone call made.
+//     *
+//     * @return the call record at the end of the list
+//     * @throws ArrayIndexOutOfBoundsException if the index is out of range
+//     */
+//    public Object getMostRecentPhoneCall() throws ArrayIndexOutOfBoundsException {
+//        return this.phoneCalls.get(phoneCalls.size() - 1);
+//    }
+//
+//    /**
+//     * Sorts the phone calls in the phone bill by starting time. Ties are
+//     * broken by comparing the callers' phone numbers.
+//     */
+//    public void sortPhoneCalls() {
+//        Collections.sort(this.phoneCalls);
+//    }
+//
+//    /**
+//     * Prints out the phone bill and all of its call records in
+//     * a user-friendly format.
+//     *
+//     * @return the entire phone bill in its new pretty format
+//     */
+//    public String prettyPrint() {
+//        sortPhoneCalls();
+//        String divider = "  ====================";
+//        int count = 0;
+//        while (count < customer.length()) {
+//            divider = divider.concat("=");
+//            count += 1;
+//        }
+//        String entireBill = "CS410J Phone Bill\n" + divider +
+//                "\n  No. of Calls on Record: " + this.phoneCalls.size() +
+//                "\n\n  Date(s)\tCaller\t\tCallee\t\tCall Began\tCall Ended\tDuration (mins)";
+//        for (Object call : getPhoneCalls()) {
+//            PhoneCall phoneCall = (PhoneCall) call;
+//            entireBill = entireBill.concat(phoneCall.prettyPrint());
+//        }
+//        return entireBill;
+//    }
 }
