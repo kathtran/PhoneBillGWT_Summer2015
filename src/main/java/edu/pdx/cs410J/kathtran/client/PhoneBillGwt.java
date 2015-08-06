@@ -8,9 +8,11 @@ import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.*;
+import com.google.gwt.user.client.ui.Button;
 import edu.pdx.cs410J.AbstractPhoneCall;
 import edu.pdx.cs410J.AbstractPhoneBill;
 
+import java.awt.*;
 import java.util.Collection;
 
 /**
@@ -20,21 +22,27 @@ import java.util.Collection;
  * @version 5.0
  */
 public class PhoneBillGwt implements EntryPoint {
+    private static ScrollPanel _README = new ScrollPanel();
+    private static ScrollPanel _ADD = new ScrollPanel();
+    private static ScrollPanel _PRINT = new ScrollPanel();
+    private static ScrollPanel _SEARCH = new ScrollPanel();
+
     public void onModuleLoad() {
 
-        Button helpButton = new Button("Help");
-
-        ScrollPanel README = new ScrollPanel();
-        README.add(readme());
+        _README.add(readme());
+        _ADD.add(addCallPage());
+        _PRINT.add(printPage());
+        _SEARCH.add(searchPage());
 
         // Set up navigation tabs that will operate as menu interface
         TabLayoutPanel navBar = new TabLayoutPanel(2.5, Style.Unit.EM);
-        navBar.add(new HTML("Welcome"), "Welcome");
-        navBar.add(README, "Help");
-        navBar.add(new HTML("Add"), "Add");
-        navBar.add(new HTML("Print"), "Print");
-        navBar.add(new HTML("Search"), "Search");
+        navBar.add(new HTML("Welcome!"), "Home");
+        navBar.add(_README, "Help");
+        navBar.add(_ADD, "Add");
+        navBar.add(_PRINT, "Print");
+        navBar.add(_SEARCH, "Search");
         RootLayoutPanel.get().add(navBar);
+
 //        Button pingServerButton = new Button("Ping Server");
 //        pingServerButton.addClickHandler(new ClickHandler() {
 //            public void onClick(ClickEvent clickEvent) {
@@ -68,9 +76,10 @@ public class PhoneBillGwt implements EntryPoint {
      * @return the README formatted in HTML
      */
     protected HTML readme() {
-        return new HTML("<p><table width=\"600\"><col width=\"150\"><tr><td colspan=\"2\" align=\"center\">" +
-                "<h1><u>README - Phone Bill Application</u></h1></td></tr>" +
-                "<tr><td><h3><u>Introduction</u></h3></td></tr>" +
+        return new HTML("<head><title>Phone Bill App - Help</title></head><body>" +
+                "<p><table width=\"600\"><col width=\"150\"><tr><td colspan=\"2\" align=\"center\">" +
+                "<h1><b>README - Phone Bill Application</b></h1></td></tr>" +
+                "<tr><td><div id=\"introduction\"><h3><u>Introduction</u></h3></div></td></tr>" +
                 "<tr><td valign=\"top\"><b>v1.0</b></td><td>Welcome to the Phone Bill Application! This is a " +
                 "command-line application that allows the user to model a phone bill. In this version, the user " +
                 "may associate at most one phone record per customer name. However, the information will not be " +
@@ -95,7 +104,7 @@ public class PhoneBillGwt implements EntryPoint {
                 "has been implemented to support all previous features associated with this phone bill " +
                 "application.</td></tr>" +
 
-                "<tr><td colspan=\"2\"><h3><u>Functionalities</u></h3></td></tr>" +
+                "<tr><td colspan=\"2\"><div id=\"functionalities\"><h3><u>Functionalities</u></h3></div></td></tr>" +
                 "<tr><td valign=\"top\"><b>Add</b></td><td>Add a new phone call to some specified " +
                 "customer's phone bill by supplying the customer name, caller number, callee number, call start " +
                 "time, and call end time.</td></tr>" +
@@ -104,7 +113,7 @@ public class PhoneBillGwt implements EntryPoint {
                 "<tr><td valign=\"top\"><b>Search</b></td><td>Search for all existing phone call records that fall under " +
                 "some starting time and some ending time.</td></tr>" +
 
-                "<tr><td colspan=\"2\"><h3><u>Arguments</u></h3></td></tr>" +
+                "<tr><td colspan=\"2\"><div id=\"arguments\"><h3><u>Arguments</u></h3></div></td></tr>" +
                 "<tr><td valign=\"top\"><b>[customer]</b></td><td valign=\"top\">Person whose phone bill we're modelling</td></tr>" +
                 "<tr><td valign=\"top\"><b>[caller number]</b></td><td valign=\"top\">Phone number of the caller</td></tr>" +
                 "<tr><td valign=\"top\"><b>[callee number]</b></td><td valign=\"top\">Phone number of the person called</td></tr>" +
@@ -116,6 +125,78 @@ public class PhoneBillGwt implements EntryPoint {
                 "appropriate.</td></tr>" +
 
                 "<tr><td colspan=\"2\" align=\"center\"><h5><i>CS410J Project 5: A Rich Internet Application for a Phone Bill</i></h5></td></tr>" +
-                "<tr><td colspan=\"2\" align=\"center\">&copy; Kathleen Tran Summer 2015</td></tr></table></p>");
+                "<tr><td colspan=\"2\" align=\"center\">&copy; Kathleen Tran Summer 2015</td></tr></table></p></body>");
+    }
+
+    protected HTML addCallPage() {
+        Button addCall = new Button("Add");
+        Button clear = new Button("Clear");
+        Button quickAdd = new Button("Quick Add");
+        Button clearQuickAdd = new Button("Clear");
+        TextBox customerNameBox = new TextBox();
+        customerNameBox.setPixelSize(413,15);
+        TextBox callerNumberBox = new TextBox();
+        TextBox calleeNumberBox = new TextBox();
+        TextBox startTimeBox = new TextBox();
+        TextBox endTimeBox = new TextBox();
+        TextBox quickAddBox = new TextBox();
+        quickAddBox.setPixelSize(413,15);
+
+        addCall.addClickHandler(new ClickHandler() {
+            public void onClick(ClickEvent clickEvent) {
+                PingServiceAsync async = GWT.create(PingService.class);
+
+            }
+        });
+
+        return new HTML("<head><title>Phone Bill App - Add</title></head><body>" +
+                "<p><table width=\"600\"><col width=\"150\"><tr><td colspan=\"4\" align=\"center\">" +
+                "<h1><b>Add a Phone Call</b></h1></td></tr>" +
+                "<tr><td colspan=\"1\" align=\"left\"><b>Customer Name</b></td><td colspan=\"3\">" + customerNameBox + "</td></tr>" +
+                "<tr><td><b>Caller Number</b></td><td>" + callerNumberBox + "</td><td><b>Callee Number</b></td><td>" + calleeNumberBox + "</td></tr>" +
+                "<tr><td><b>Call Began</b></td><td>" + startTimeBox + "</td><td><b>Call Ended</b></td><td>" + endTimeBox + "</td></tr>" +
+                "<tr></tr><tr><td colspan=\"1\"></td><td colspan=\"1\"></td><td colspan=\"1\"></td>" +
+                "<td colspan=\"1\" align=\"left\">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" + addCall + "&nbsp;&nbsp;" + clear + "</td></tr>" +
+                "<tr style=\"height:20px\"></tr>" +
+                "<tr><td colspan=\"1\" align=\"left\"><b>Phone Call</b></td><td colspan=\"3\">" + quickAddBox + "</td></tr>" +
+                "<tr></tr><tr><td colspan=\"1\"></td><td colspan=\"1\"></td><td colspan=\"1\"></td>" +
+                "<td align=\"left\">&nbsp;" + quickAdd + "&nbsp;&nbsp;" + clearQuickAdd + "</td></tr>" +
+                "<tr style=\"height:75px\"><td colspan=\"4\"><hr width=\"90%\"></td></tr>" +
+                "</table></p></body>");
+    }
+
+    protected HTML printPage() {
+        Button printRecent = new Button("Print");
+        Button printOneBill = new Button("Print One");
+        Button printAllBills = new Button("Print All");
+        TextBox customerNameBox = new TextBox();
+        customerNameBox.setPixelSize(275, 15);
+
+        return new HTML("<head><title>Phone Bill App - Print</title></head><body>" +
+                "<p><table width=\"600\"><col width=\"150\"><tr><td colspan=\"4\" align=\"center\">" +
+                "<h1><b>Printing Phone Calls and Bills</b></h1></td></tr>" +
+                "<tr><td colspan=\"3\"><b>Most Recent Phone Call</b></td><td colspan=\"1\" align=\"right\">" + printRecent + "</td><tr>" +
+                "<tr style=\"height:75px\"><td colspan=\"4\"><hr width=\"90%\"></td></tr>" +
+                "<tr style=\"height:90px\"></tr>" +
+                "<tr><td colspan=\"1\"><b>Phone Bill</b></td><td colspan=\"2\">" + customerNameBox + "</td>" +
+                "<td colspan=\"1\" align=\"right\">" + printOneBill + "&nbsp;&nbsp;" + printAllBills + "</td><tr>" +
+                "<tr style=\"height:75px\"><td colspan=\"4\"><hr width=\"90%\"></td></tr>" +
+                "</table></p></body>");
+    }
+
+    protected HTML searchPage() {
+        Button search = new Button("Search");
+        TextBox startTimeBox = new TextBox();
+        TextBox endTimeBox = new TextBox();
+
+        return new HTML("<head><title>Phone Bill App - Search</title></head><body>" +
+                "<p><table width=\"600\">" +
+                "<colgroup><col style=\"width:20%\"><col style=\"width:20%\"><col style=\"width:20%\"><col style=\"width:20%\"><col style=\"width:20%\"></colgroup>" +
+                "<tr><td colspan=\"5\" align=\"center\">" +
+                "<h1><b>Search for Calls</b></h1></td></tr>" +
+                "<tr><td><b>Between</b></td><td align=\"left\">" + startTimeBox + "</td><td align=\"center\"><b>and</b></td>" +
+                "<td>" + endTimeBox + "</td><td align=\"center\">" + search + "</td><tr>" +
+                "<tr style=\"height:75px\"><td colspan=\"5\"><hr width=\"90%\"></td></tr>" +
+                "</table></p></body>");
     }
 }
