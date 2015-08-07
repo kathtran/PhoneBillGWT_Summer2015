@@ -22,12 +22,50 @@ import java.util.Collection;
  * @version 5.0
  */
 public class PhoneBillGwt implements EntryPoint {
+    private static RootLayoutPanel rootLayoutPanel = RootLayoutPanel.get();
     private static ScrollPanel _README = new ScrollPanel();
     private static ScrollPanel _ADD = new ScrollPanel();
     private static ScrollPanel _PRINT = new ScrollPanel();
     private static ScrollPanel _SEARCH = new ScrollPanel();
+    private final Button addCall = new Button("Add");
+    private final Button clear = new Button("Clear");
+    private final Button quickAdd = new Button("Quick Add");
+    private final Button clearQuickAdd = new Button("Clear");
+    private final TextBox customerNameBox = new TextBox();
+    private final TextBox callerNumberBox = new TextBox();
+    private final TextBox calleeNumberBox = new TextBox();
+    private final TextBox startTimeBox = new TextBox();
+    private final TextBox endTimeBox = new TextBox();
+    private final TextBox quickAddBox = new TextBox();
+    private final Button printRecent = new Button("Print");
+    private final Button printOneBill = new Button("Print One");
+    private final Button printAllBills = new Button("Print All");
+    private final Button search = new Button("Search");
+    private final Button pingServerButton = new Button("Ping Server");
 
     public void onModuleLoad() {
+
+        pingServerButton.addClickHandler(new ClickHandler() {
+            public void onClick(ClickEvent clickEvent) {
+                PingServiceAsync async = GWT.create(PingService.class);
+                async.ping(new AsyncCallback<AbstractPhoneBill>() {
+
+                    public void onFailure(Throwable ex) {
+                        Window.alert(ex.toString());
+                    }
+
+                    public void onSuccess(AbstractPhoneBill phonebill) {
+                        StringBuilder sb = new StringBuilder(phonebill.toString());
+                        Collection<AbstractPhoneCall> calls = phonebill.getPhoneCalls();
+                        for (AbstractPhoneCall call : calls) {
+                            sb.append(call);
+                            sb.append("\n");
+                        }
+                        Window.alert(sb.toString());
+                    }
+                });
+            }
+        });
 
         _README.add(readme());
         _ADD.add(addCallPage());
@@ -41,33 +79,8 @@ public class PhoneBillGwt implements EntryPoint {
         navBar.add(_ADD, "Add");
         navBar.add(_PRINT, "Print");
         navBar.add(_SEARCH, "Search");
-        RootLayoutPanel.get().add(navBar);
 
-//        Button pingServerButton = new Button("Ping Server");
-//        pingServerButton.addClickHandler(new ClickHandler() {
-//            public void onClick(ClickEvent clickEvent) {
-//                PingServiceAsync async = GWT.create(PingService.class);
-//                async.ping(new AsyncCallback<AbstractPhoneBill>() {
-//
-//                    public void onFailure(Throwable ex) {
-//                        Window.alert(ex.toString());
-//                    }
-//
-//                    public void onSuccess(AbstractPhoneBill phonebill) {
-//                        StringBuilder sb = new StringBuilder(phonebill.toString());
-//                        Collection<AbstractPhoneCall> calls = phonebill.getPhoneCalls();
-//                        for (AbstractPhoneCall call : calls) {
-//                            sb.append(call);
-//                            sb.append("\n");
-//                        }
-//                        Window.alert(sb.toString());
-//                    }
-//                });
-//            }
-//        });
-        RootPanel rootPanel = RootPanel.get();
-        //rootPanel.add(pingServerButton);
-        rootPanel.add(navBar);
+        rootLayoutPanel.add(navBar);
     }
 
     /**
@@ -129,18 +142,8 @@ public class PhoneBillGwt implements EntryPoint {
     }
 
     protected HTML addCallPage() {
-        Button addCall = new Button("Add");
-        Button clear = new Button("Clear");
-        Button quickAdd = new Button("Quick Add");
-        Button clearQuickAdd = new Button("Clear");
-        TextBox customerNameBox = new TextBox();
-        customerNameBox.setPixelSize(413,15);
-        TextBox callerNumberBox = new TextBox();
-        TextBox calleeNumberBox = new TextBox();
-        TextBox startTimeBox = new TextBox();
-        TextBox endTimeBox = new TextBox();
-        TextBox quickAddBox = new TextBox();
-        quickAddBox.setPixelSize(413,15);
+        customerNameBox.setPixelSize(413, 15);
+        quickAddBox.setPixelSize(413, 15);
 
         addCall.addClickHandler(new ClickHandler() {
             public void onClick(ClickEvent clickEvent) {
@@ -149,7 +152,7 @@ public class PhoneBillGwt implements EntryPoint {
             }
         });
 
-        return new HTML("<head><title>Phone Bill App - Add</title></head><body>" +
+        return new HTML(pingServerButton + "<head><title>Phone Bill App - Add</title></head><body>" +
                 "<p><table width=\"600\"><col width=\"150\"><tr><td colspan=\"4\" align=\"center\">" +
                 "<h1><b>Add a Phone Call</b></h1></td></tr>" +
                 "<tr><td colspan=\"1\" align=\"left\"><b>Customer Name</b></td><td colspan=\"3\">" + customerNameBox + "</td></tr>" +
@@ -166,10 +169,6 @@ public class PhoneBillGwt implements EntryPoint {
     }
 
     protected HTML printPage() {
-        Button printRecent = new Button("Print");
-        Button printOneBill = new Button("Print One");
-        Button printAllBills = new Button("Print All");
-        TextBox customerNameBox = new TextBox();
         customerNameBox.setPixelSize(275, 15);
 
         return new HTML("<head><title>Phone Bill App - Print</title></head><body>" +
@@ -185,9 +184,6 @@ public class PhoneBillGwt implements EntryPoint {
     }
 
     protected HTML searchPage() {
-        Button search = new Button("Search");
-        TextBox startTimeBox = new TextBox();
-        TextBox endTimeBox = new TextBox();
 
         return new HTML("<head><title>Phone Bill App - Search</title></head><body>" +
                 "<p><table width=\"600\">" +
