@@ -24,7 +24,7 @@ import java.util.Collections;
  * @author Kathleen Tran
  * @version 5.0
  */
-public class PhoneBill extends AbstractPhoneBill implements Serializable {
+public class PhoneBill extends AbstractPhoneBill {
 
     /**
      * The customer's name. May consist of one or more words,
