@@ -4,7 +4,7 @@ import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 import edu.pdx.cs410J.AbstractPhoneBill;
 import edu.pdx.cs410J.kathtran.client.PhoneBill;
 import edu.pdx.cs410J.kathtran.client.PhoneCall;
-import edu.pdx.cs410J.kathtran.client.PingService;
+import edu.pdx.cs410J.kathtran.client.PhoneBillService;
 
 import java.lang.Override;
 
@@ -14,7 +14,7 @@ import java.lang.Override;
  * @author Kathleen Tran
  * @version 5.0
  */
-public class PingServiceImpl extends RemoteServiceServlet implements PingService {
+public class PhoneBillServiceImpl extends RemoteServiceServlet implements PhoneBillService {
     @Override
     public AbstractPhoneBill ping() {
         PhoneBill phonebill = new PhoneBill();
