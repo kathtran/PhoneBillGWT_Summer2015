@@ -2,6 +2,7 @@ package edu.pdx.cs410J.kathtran.client;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import edu.pdx.cs410J.AbstractPhoneBill;
+import edu.pdx.cs410J.AbstractPhoneCall;
 
 /**
  * The client-side interface to the phone bill service
@@ -11,8 +12,12 @@ import edu.pdx.cs410J.AbstractPhoneBill;
  */
 public interface PhoneBillServiceAsync {
 
-    /**
-     * Return the current date/time on the server
-     */
-    void ping(AsyncCallback<AbstractPhoneBill> async);
+//    /**
+//     * Return the added phone call.
+//     */
+//    void addPhoneCall(String[] userInput, AsyncCallback<AbstractPhoneBill> async);
+
+    void getCustomer(String customer, AsyncCallback<AbstractPhoneBill> async);
+
+
 }

@@ -2,11 +2,14 @@ package edu.pdx.cs410J.kathtran.server;
 
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 import edu.pdx.cs410J.AbstractPhoneBill;
+import edu.pdx.cs410J.AbstractPhoneCall;
 import edu.pdx.cs410J.kathtran.client.PhoneBill;
 import edu.pdx.cs410J.kathtran.client.PhoneCall;
 import edu.pdx.cs410J.kathtran.client.PhoneBillService;
 
 import java.lang.Override;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * The server-side implementation of the Phone Bill service
@@ -15,21 +18,32 @@ import java.lang.Override;
  * @version 5.0
  */
 public class PhoneBillServiceImpl extends RemoteServiceServlet implements PhoneBillService {
-    @Override
-    public AbstractPhoneBill ping() {
-        PhoneBill phonebill = new PhoneBill();
-        phonebill.addPhoneCall(new PhoneCall());
-        return phonebill;
-    }
+//    private Map<String, PhoneBill> data = new HashMap<>();
 
     /**
-     * Log unhandled exceptions to standard error
+     * Returns the added phone call.
      *
-     * @param unhandled The exception that wasn't handled
+     * @param customer@return the phone call
      */
     @Override
-    protected void doUnexpectedFailure(Throwable unhandled) {
-        unhandled.printStackTrace(System.err);
-        super.doUnexpectedFailure(unhandled);
+    public AbstractPhoneBill getCustomer(String customer) {
+        PhoneBill phoneBill = new PhoneBill();
+        phoneBill.addCustomer(customer);
+        return phoneBill;
     }
+
+//    /**
+//     * Returns the added phone call.
+//     *
+//     * @param userInput the data that will populate the phone call record
+//     * @return the phone call
+//     */
+//    @Override
+//    public AbstractPhoneBill addPhoneCall(String[] userInput) {
+//        PhoneBill phoneBill = new PhoneBill(userInput[0]);
+//        PhoneCall phoneCall = new PhoneCall(userInput);
+//        phoneBill.addPhoneCall(phoneCall);
+//        this.data.put(phoneBill.getCustomer(), phoneBill);
+//        return this.data.get(phoneBill.getCustomer());
+//    }
 }

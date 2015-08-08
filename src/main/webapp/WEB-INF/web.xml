@@ -6,13 +6,13 @@
 
   <!-- Servlets -->
   <servlet>
-    <servlet-name>pingServlet</servlet-name>
+    <servlet-name>PhoneBillService</servlet-name>
     <servlet-class>edu.pdx.cs410J.kathtran.server.PhoneBillServiceImpl</servlet-class>
   </servlet>
 
   <servlet-mapping>
-    <servlet-name>pingServlet</servlet-name>
-    <url-pattern>/phonebill/ping</url-pattern>
+    <servlet-name>PhoneBillService</servlet-name>
+    <url-pattern>/phonebill/phonecall</url-pattern>
   </servlet-mapping>
 
   <!-- Default page to serve -->
