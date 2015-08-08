@@ -173,7 +173,8 @@ public class PhoneCall extends AbstractPhoneCall implements Comparable {
         try {
             date = parseDate.parse(dateToFormat);
         } catch (ParseException ex) {
-            return null;
+            System.err.println("Something went wrong whilst attempting to parse the date");
+            System.exit(1);
         }
         return DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT).format(date);
     }
@@ -256,7 +257,8 @@ public class PhoneCall extends AbstractPhoneCall implements Comparable {
         try {
             date = parseDate.parse(dateToGet);
         } catch (ParseException ex) {
-            return null;
+            System.err.println("Something went wrong whilst attempting to parse the date");
+            System.exit(1);
         }
         return date;
     }
@@ -273,7 +275,8 @@ public class PhoneCall extends AbstractPhoneCall implements Comparable {
         try {
             date = parseDate.parse(dateToFormat);
         } catch (ParseException ex) {
-            return null;
+            System.err.println("Something went wrong whilst attempting to parse the date");
+            System.exit(1);
         }
         return DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT).format(date);
     }
@@ -301,8 +304,10 @@ public class PhoneCall extends AbstractPhoneCall implements Comparable {
             else
                 return 0;
         } catch (NumberFormatException ex) {
-            return 2;
+            System.err.println("Something went wrong whilst attempting to parse the phone numbers");
+            System.exit(1);
         }
+        return 1;
     }
 
     /**
@@ -344,7 +349,8 @@ public class PhoneCall extends AbstractPhoneCall implements Comparable {
         try {
             date = parseDate.parse(dateToParse);
         } catch (ParseException ex) {
-            return null;
+            System.err.println("Something went wrong whilst attempting to parse the date");
+            System.exit(1);
         }
         return DateFormat.getDateInstance(DateFormat.SHORT).format(date);
     }
@@ -362,7 +368,8 @@ public class PhoneCall extends AbstractPhoneCall implements Comparable {
         try {
             date = parseDate.parse(split[1] + " " + split[2]);
         } catch (ParseException ex) {
-            return null;
+            System.err.println("Something went wrong whilst attempting to parse the time");
+            System.exit(1);
         }
         return DateFormat.getTimeInstance(DateFormat.SHORT).format(date);
     }
