@@ -12,8 +12,12 @@ import edu.pdx.cs410J.AbstractPhoneCall;
  */
 public interface PhoneBillServiceAsync {
 
-    /**
-     * Return the added phone call.
-     */
-    void addPhoneCall(String[] userInput, AsyncCallback<AbstractPhoneBill> async);
+//    /**
+//     * Return the added phone call.
+//     */
+//    void addPhoneCall(String[] userInput, AsyncCallback<AbstractPhoneBill> async);
+
+    void getCustomer(String customer, AsyncCallback<AbstractPhoneBill> async);
+
+
 }

@@ -14,11 +14,13 @@ import edu.pdx.cs410J.AbstractPhoneCall;
 @RemoteServiceRelativePath("phonecall")
 public interface PhoneBillService extends RemoteService {
 
-    /**
-     * Returns the added phone call.
-     *
-     * @param userInput the data that will populate the phone call record
-     * @return the phone call
-     */
-    public AbstractPhoneBill addPhoneCall(String[] userInput);
+//    /**
+//     * Returns the added phone call.
+//     *
+//     * @param userInput the data that will populate the phone call record
+//     * @return the phone call
+//     */
+//    public AbstractPhoneBill addPhoneCall(String[] userInput);
+
+    public AbstractPhoneBill getCustomer(String customer);
 }

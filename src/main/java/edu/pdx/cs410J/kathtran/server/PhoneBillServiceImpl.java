@@ -18,20 +18,32 @@ import java.util.Map;
  * @version 5.0
  */
 public class PhoneBillServiceImpl extends RemoteServiceServlet implements PhoneBillService {
-    private Map<String, PhoneBill> data = new HashMap<>();
+//    private Map<String, PhoneBill> data = new HashMap<>();
 
     /**
      * Returns the added phone call.
      *
-     * @param userInput the data that will populate the phone call record
-     * @return the phone call
+     * @param customer@return the phone call
      */
     @Override
-    public AbstractPhoneBill addPhoneCall(String[] userInput) {
-        PhoneBill phoneBill = new PhoneBill(userInput[0]);
-        PhoneCall phoneCall = new PhoneCall(userInput);
-        phoneBill.addPhoneCall(phoneCall);
-        this.data.put(phoneBill.getCustomer(), phoneBill);
-        return this.data.get(phoneBill.getCustomer());
+    public AbstractPhoneBill getCustomer(String customer) {
+        PhoneBill phoneBill = new PhoneBill();
+        phoneBill.addCustomer(customer);
+        return phoneBill;
     }
+
+//    /**
+//     * Returns the added phone call.
+//     *
+//     * @param userInput the data that will populate the phone call record
+//     * @return the phone call
+//     */
+//    @Override
+//    public AbstractPhoneBill addPhoneCall(String[] userInput) {
+//        PhoneBill phoneBill = new PhoneBill(userInput[0]);
+//        PhoneCall phoneCall = new PhoneCall(userInput);
+//        phoneBill.addPhoneCall(phoneCall);
+//        this.data.put(phoneBill.getCustomer(), phoneBill);
+//        return this.data.get(phoneBill.getCustomer());
+//    }
 }

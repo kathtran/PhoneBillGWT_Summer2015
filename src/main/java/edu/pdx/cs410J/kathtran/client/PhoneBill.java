@@ -24,7 +24,7 @@ import java.util.Collections;
  * @author Kathleen Tran
  * @version 5.0
  */
-public class PhoneBill extends AbstractPhoneBill implements Serializable{
+public class PhoneBill extends AbstractPhoneBill implements Serializable {
 
     /**
      * The customer's name. May consist of one or more words,
@@ -59,6 +59,15 @@ public class PhoneBill extends AbstractPhoneBill implements Serializable{
     }
 
     /**
+     * Add a customer to the phone bill.
+     *
+     * @param customer some name
+     */
+    public void addCustomer(String customer) {
+        this.customer = customer;
+    }
+
+    /**
      * @return the name of the customer whose phone bill this is
      */
     @Override
@@ -75,7 +84,7 @@ public class PhoneBill extends AbstractPhoneBill implements Serializable{
      */
     @Override
     public void addPhoneCall(AbstractPhoneCall call) {
-        this.phoneCalls.add((PhoneCall)call);
+        this.phoneCalls.add((PhoneCall) call);
     }
 
     /**
