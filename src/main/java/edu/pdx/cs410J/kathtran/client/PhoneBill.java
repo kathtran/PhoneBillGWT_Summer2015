@@ -3,6 +3,7 @@ package edu.pdx.cs410J.kathtran.client;
 import edu.pdx.cs410J.AbstractPhoneCall;
 import edu.pdx.cs410J.AbstractPhoneBill;
 
+import java.io.Serializable;
 import java.lang.Override;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -23,23 +24,7 @@ import java.util.Collections;
  * @author Kathleen Tran
  * @version 5.0
  */
-public class PhoneBill extends AbstractPhoneBill {
-//    private Collection<AbstractPhoneCall> calls = new ArrayList<AbstractPhoneCall>();
-//
-//    @Override
-//    public String getCustomer() {
-//        return "CS410J";
-//    }
-//
-//    @Override
-//    public void addPhoneCall(AbstractPhoneCall call) {
-//        this.calls.add(call);
-//    }
-//
-//    @Override
-//    public Collection getPhoneCalls() {
-//        return this.calls;
-//    }
+public class PhoneBill extends AbstractPhoneBill implements Serializable{
 
     /**
      * The customer's name. May consist of one or more words,
@@ -52,14 +37,14 @@ public class PhoneBill extends AbstractPhoneBill {
      * customer. Each record, or item, is an instance of the
      * {@link PhoneCall} class.
      */
-    private ArrayList phoneCalls;
+    private ArrayList<PhoneCall> phoneCalls;
 
     /**
      * Default constructor.
      */
     public PhoneBill() {
         this.customer = null;
-        this.phoneCalls = new ArrayList<PhoneCall>();
+        this.phoneCalls = null;
     }
 
     /**
@@ -70,7 +55,7 @@ public class PhoneBill extends AbstractPhoneBill {
      */
     public PhoneBill(String customer) {
         this.customer = customer;
-        this.phoneCalls = new ArrayList<PhoneCall>();
+        this.phoneCalls = new ArrayList<>();
     }
 
     /**
@@ -90,7 +75,7 @@ public class PhoneBill extends AbstractPhoneBill {
      */
     @Override
     public void addPhoneCall(AbstractPhoneCall call) {
-        this.phoneCalls.add(call);
+        this.phoneCalls.add((PhoneCall)call);
     }
 
     /**

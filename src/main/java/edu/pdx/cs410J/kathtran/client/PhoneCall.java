@@ -1,14 +1,15 @@
 package edu.pdx.cs410J.kathtran.client;
 
+import com.google.gwt.regexp.shared.MatchResult;
+import com.google.gwt.regexp.shared.RegExp;
 import edu.pdx.cs410J.AbstractPhoneCall;
 
+import java.io.Serializable;
 import java.lang.Override;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 /**
  * Implements the abstract methods that can be found within
@@ -26,34 +27,7 @@ import java.util.regex.Pattern;
  * @author Kathleen Tran
  * @version 5.0
  */
-public class PhoneCall extends AbstractPhoneCall implements Comparable {
-
-//    @Override
-//    public String getCaller() {
-//        return "123-345-6789";
-//    }
-//
-//    @Override
-//    public Date getStartTime() {
-//        return new Date();
-//    }
-//
-//    public String getStartTimeString() {
-//        return "START " + getStartTime();
-//    }
-//
-//    @Override
-//    public String getCallee() {
-//        return "345-677-2341";
-//    }
-//
-//    public Date getEndTime() {
-//        return new Date();
-//    }
-//
-//    public String getEndTimeString() {
-//        return "END " + getEndTime();
-//    }
+public class PhoneCall extends AbstractPhoneCall implements Comparable<PhoneCall> {
 
     /**
      * The phone number of the caller
@@ -174,7 +148,6 @@ public class PhoneCall extends AbstractPhoneCall implements Comparable {
             date = parseDate.parse(dateToFormat);
         } catch (ParseException ex) {
             System.err.println("Something went wrong whilst attempting to parse the date");
-            System.exit(1);
         }
         return DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT).format(date);
     }
@@ -192,26 +165,24 @@ public class PhoneCall extends AbstractPhoneCall implements Comparable {
     }
 
     /**
-     * Compares this object with the specified object for order. Returns a
-     * negative integer, zero, or a positive integer as this object is less
-     * than, equal to, or greater than the specified object.
+     * Compares this call with the specified call for order. Returns a
+     * negative integer, zero, or a positive integer as this call is less
+     * than, equal to, or greater than the specified call.
      *
-     * @param object the object to be compared.
-     * @return a negative integer, zero, or a positive integer as this object
-     * is less than, equal to, or greater than the specified object.
-     * @throws NullPointerException if the specified object is null
-     * @throws ClassCastException   if the specified object's type prevents it
-     *                              from being compared to this object.
+     * @param call the call to be compared.
+     * @return a negative integer, zero, or a positive integer as this call
+     * is less than, equal to, or greater than the specified call.
+     * @throws NullPointerException if the specified call is null
+     * @throws ClassCastException   if the specified call's type prevents it
+     *                              from being compared to this call.
      */
     @Override
-    public int compareTo(Object object) throws NullPointerException, ClassCastException {
-        PhoneCall comparison = (PhoneCall) object;
-
+    public int compareTo(PhoneCall call) throws NullPointerException, ClassCastException {
         Date thisDate = getDateObject(this.getStartTimeString());
-        Date thatDate = getDateObject(comparison.getStartTimeString());
+        Date thatDate = getDateObject(call.getStartTimeString());
 
         if (thisDate.equals(thatDate)) {
-            int numberCompareResult = comparePhoneNumbers(comparison.getCaller());
+            int numberCompareResult = comparePhoneNumbers(call.getCaller());
             if (numberCompareResult == 0) {
                 return 0;
             } else
@@ -258,7 +229,6 @@ public class PhoneCall extends AbstractPhoneCall implements Comparable {
             date = parseDate.parse(dateToGet);
         } catch (ParseException ex) {
             System.err.println("Something went wrong whilst attempting to parse the date");
-            System.exit(1);
         }
         return date;
     }
@@ -276,7 +246,6 @@ public class PhoneCall extends AbstractPhoneCall implements Comparable {
             date = parseDate.parse(dateToFormat);
         } catch (ParseException ex) {
             System.err.println("Something went wrong whilst attempting to parse the date");
-            System.exit(1);
         }
         return DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT).format(date);
     }
@@ -305,7 +274,6 @@ public class PhoneCall extends AbstractPhoneCall implements Comparable {
                 return 0;
         } catch (NumberFormatException ex) {
             System.err.println("Something went wrong whilst attempting to parse the phone numbers");
-            System.exit(1);
         }
         return 1;
     }
@@ -350,7 +318,6 @@ public class PhoneCall extends AbstractPhoneCall implements Comparable {
             date = parseDate.parse(dateToParse);
         } catch (ParseException ex) {
             System.err.println("Something went wrong whilst attempting to parse the date");
-            System.exit(1);
         }
         return DateFormat.getDateInstance(DateFormat.SHORT).format(date);
     }
@@ -369,7 +336,6 @@ public class PhoneCall extends AbstractPhoneCall implements Comparable {
             date = parseDate.parse(split[1] + " " + split[2]);
         } catch (ParseException ex) {
             System.err.println("Something went wrong whilst attempting to parse the time");
-            System.exit(1);
         }
         return DateFormat.getTimeInstance(DateFormat.SHORT).format(date);
     }
@@ -402,9 +368,10 @@ public class PhoneCall extends AbstractPhoneCall implements Comparable {
      * @return True if the form is valid, otherwise false
      */
     public boolean isValidPhoneNumber(String phoneNumberInput) {
-        Pattern phoneNumberFormat = Pattern.compile("\\d{3}-\\d{3}-\\d{4}");
-        Matcher numberToBeChecked = phoneNumberFormat.matcher(phoneNumberInput);
-        return numberToBeChecked.matches();
+        RegExp regExp = RegExp.compile("\\d{3}-\\d{3}-\\d{4}");
+        MatchResult numberToBeChecked = regExp.exec(phoneNumberInput);
+        boolean match = numberToBeChecked != null;
+        return match;
     }
 
     /**
@@ -435,8 +402,9 @@ public class PhoneCall extends AbstractPhoneCall implements Comparable {
      * @return True if the form is valid, otherwise false
      */
     public boolean isValidTimeOfDay(String timeToCheck) {
-        Pattern timeFormat = Pattern.compile("(0?[1-9]|1[0-2]):[0-5][0-9]");
-        Matcher timeToBeChecked = timeFormat.matcher(timeToCheck);
-        return timeToBeChecked.matches();
+        RegExp regExp = RegExp.compile("(0?[1-9]|1[0-2]):[0-5][0-9]");
+        MatchResult timeToBeChecked = regExp.exec(timeToCheck);
+        boolean match = timeToBeChecked != null;
+        return match;
     }
 }
