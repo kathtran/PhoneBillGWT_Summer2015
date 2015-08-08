@@ -136,23 +136,23 @@ public class PhoneBillGwt implements EntryPoint {
                 String customer = customerNameBox.getText();
                 Window.alert("CUSTOMER IS: " + customer);
 
-                PhoneBillServiceAsync async = GWT.create(PhoneBillService.class);
-                async.getCustomer(customer, display());
+//                PhoneBillServiceAsync async = GWT.create(PhoneBillService.class);
+//                async.getCustomer(customer, display());
             }
 
-            private AsyncCallback<AbstractPhoneBill> display() {
-                return new AsyncCallback<AbstractPhoneBill>() {
-                    @Override
-                    public void onFailure(Throwable throwable) {
-                        Window.alert(throwable.toString());
-                    }
-
-                    @Override
-                    public void onSuccess(AbstractPhoneBill phoneBill) {
-                        Window.alert(phoneBill.getCustomer());
-                    }
-                };
-            }
+//            private AsyncCallback<AbstractPhoneBill> display() {
+//                return new AsyncCallback<AbstractPhoneBill>() {
+//                    @Override
+//                    public void onFailure(Throwable throwable) {
+//                        Window.alert(throwable.toString());
+//                    }
+//
+//                    @Override
+//                    public void onSuccess(AbstractPhoneBill phoneBill) {
+//                        Window.alert(phoneBill.getCustomer());
+//                    }
+//                };
+//            }
         };
     }
 
