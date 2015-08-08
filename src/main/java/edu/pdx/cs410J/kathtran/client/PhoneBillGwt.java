@@ -118,26 +118,7 @@ public class PhoneBillGwt implements EntryPoint {
         quickAddSection.add(clearQuickAddButton);
         _ADD.add(quickAddSection);
 
-        addButton.addClickHandler(new ClickHandler() {
-            @Override
-            public void onClick(ClickEvent clickEvent) {
-                String customer = customerNameBox.getText();
-                Window.alert("CUSTOMER IS: " + customer);
-
-                PhoneBillServiceAsync async = GWT.create(PhoneBillService.class);
-                async.getCustomer(customer, new AsyncCallback<AbstractPhoneBill>() {
-                    @Override
-                    public void onFailure(Throwable throwable) {
-                        Window.alert(throwable.toString());
-                    }
-
-                    @Override
-                    public void onSuccess(AbstractPhoneBill phoneBill) {
-                        Window.alert(phoneBill.getCustomer());
-                    }
-                });
-            }
-        });
+        addButton.addClickHandler(getCustomer());
 
         navBar.add(new HTML("Welcome!"), "Home");
         navBar.add(readme(), "Help");
@@ -147,6 +128,35 @@ public class PhoneBillGwt implements EntryPoint {
 
         rootLayoutPanel.add(navBar);
     }
+
+    private ClickHandler getCustomer() {
+        return new ClickHandler() {
+            @Override
+            public void onClick(ClickEvent clickEvent) {
+                String customer = customerNameBox.getText();
+                Window.alert("CUSTOMER IS: " + customer);
+
+                PhoneBillServiceAsync async = GWT.create(PhoneBillService.class);
+                async.getCustomer(customer, display());
+            }
+
+            private AsyncCallback<AbstractPhoneBill> display() {
+                return new AsyncCallback<AbstractPhoneBill>() {
+                    @Override
+                    public void onFailure(Throwable throwable) {
+                        Window.alert(throwable.toString());
+                    }
+
+                    @Override
+                    public void onSuccess(AbstractPhoneBill phoneBill) {
+                        Window.alert(phoneBill.getCustomer());
+                    }
+                };
+            }
+        };
+    }
+
+
 
 //    protected ClickHandler addPhoneCallToServer() {
 //        return new ClickHandler() {
