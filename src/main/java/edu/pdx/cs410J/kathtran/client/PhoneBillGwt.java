@@ -56,13 +56,13 @@ public class PhoneBillGwt implements EntryPoint {
     private static String startTime;
     private static String endTime;
     private final String[] userInputs = new String[5];
-//    private final PingServiceAsync async = GWT.create(PingService.class);
+//    private final PhoneBillServiceAsync async = GWT.create(PhoneBillService.class);
 
     public void onModuleLoad() {
 
 //        pingServerButton.addClickHandler(new ClickHandler() {
 //            public void onClick(ClickEvent clickEvent) {
-//                PingServiceAsync async = GWT.create(PingService.class);
+//                PhoneBillServiceAsync async = GWT.create(PhoneBillService.class);
 //                async.ping(new AsyncCallback<AbstractPhoneBill>() {
 //
 //                    public void onFailure(Throwable ex) {
