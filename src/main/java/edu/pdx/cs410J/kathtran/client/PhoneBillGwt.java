@@ -5,6 +5,11 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.i18n.client.DateTimeFormat;
+import com.google.gwt.i18n.client.DefaultDateTimeFormatInfo;
+import com.google.gwt.i18n.shared.DateTimeFormatInfo;
+import com.google.gwt.regexp.shared.MatchResult;
+import com.google.gwt.regexp.shared.RegExp;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.*;
@@ -12,7 +17,9 @@ import com.google.gwt.user.client.ui.Button;
 import edu.pdx.cs410J.AbstractPhoneCall;
 import edu.pdx.cs410J.AbstractPhoneBill;
 
-import java.awt.*;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Collection;
 
 /**
@@ -22,61 +29,75 @@ import java.util.Collection;
  * @version 5.0
  */
 public class PhoneBillGwt implements EntryPoint {
+    private static RootLayoutPanel rootLayoutPanel = RootLayoutPanel.get();
     private static ScrollPanel _README = new ScrollPanel();
-    private static ScrollPanel _ADD = new ScrollPanel();
-    private static ScrollPanel _PRINT = new ScrollPanel();
-    private static ScrollPanel _SEARCH = new ScrollPanel();
+    private static FlowPanel _ADD = new FlowPanel();
+    private static FlowPanel _PRINT = new FlowPanel();
+    private static FlowPanel _SEARCH = new FlowPanel();
+    private final Button addCall = new Button("Add");
+    private final Button clear = new Button("Clear");
+    private final Button quickAdd = new Button("Quick Add");
+    private final Button clearQuickAdd = new Button("Clear");
+    private final TextBox customerNameBox = new TextBox();
+    private final TextBox callerNumberBox = new TextBox();
+    private final TextBox calleeNumberBox = new TextBox();
+    private final TextBox startTimeBox = new TextBox();
+    private final TextBox endTimeBox = new TextBox();
+    private final TextBox quickAddBox = new TextBox();
+    private final Button printRecent = new Button("Print");
+    private final Button printOneBill = new Button("Print One");
+    private final Button printAllBills = new Button("Print All");
+    private final Button search = new Button("Search");
+    private final Button pingServerButton = new Button("Ping Server");
+
+    private static String customer;
+    private static String caller;
+    private static String callee;
+    private static String startTime;
+    private static String endTime;
 
     public void onModuleLoad() {
 
-        _README.add(readme());
-        _ADD.add(addCallPage());
-        _PRINT.add(printPage());
-        _SEARCH.add(searchPage());
+        pingServerButton.addClickHandler(new ClickHandler() {
+            public void onClick(ClickEvent clickEvent) {
+                PingServiceAsync async = GWT.create(PingService.class);
+                async.ping(new AsyncCallback<AbstractPhoneBill>() {
+
+                    public void onFailure(Throwable ex) {
+                        Window.alert(ex.toString());
+                    }
+
+                    public void onSuccess(AbstractPhoneBill phonebill) {
+                        StringBuilder sb = new StringBuilder(phonebill.toString());
+                        Collection<AbstractPhoneCall> calls = phonebill.getPhoneCalls();
+                        for (AbstractPhoneCall call : calls) {
+                            sb.append(call);
+                            sb.append("\n");
+                        }
+                        Window.alert(sb.toString());
+                    }
+                });
+            }
+        });
 
         // Set up navigation tabs that will operate as menu interface
         TabLayoutPanel navBar = new TabLayoutPanel(2.5, Style.Unit.EM);
         navBar.add(new HTML("Welcome!"), "Home");
-        navBar.add(_README, "Help");
-        navBar.add(_ADD, "Add");
-        navBar.add(_PRINT, "Print");
-        navBar.add(_SEARCH, "Search");
-        RootLayoutPanel.get().add(navBar);
+        navBar.add(readme(), "Help");
+        navBar.add(addCallPage(), "Add");
+        navBar.add(printPage(), "Print");
+        navBar.add(searchPage(), "Search");
 
-//        Button pingServerButton = new Button("Ping Server");
-//        pingServerButton.addClickHandler(new ClickHandler() {
-//            public void onClick(ClickEvent clickEvent) {
-//                PingServiceAsync async = GWT.create(PingService.class);
-//                async.ping(new AsyncCallback<AbstractPhoneBill>() {
-//
-//                    public void onFailure(Throwable ex) {
-//                        Window.alert(ex.toString());
-//                    }
-//
-//                    public void onSuccess(AbstractPhoneBill phonebill) {
-//                        StringBuilder sb = new StringBuilder(phonebill.toString());
-//                        Collection<AbstractPhoneCall> calls = phonebill.getPhoneCalls();
-//                        for (AbstractPhoneCall call : calls) {
-//                            sb.append(call);
-//                            sb.append("\n");
-//                        }
-//                        Window.alert(sb.toString());
-//                    }
-//                });
-//            }
-//        });
-        RootPanel rootPanel = RootPanel.get();
-        //rootPanel.add(pingServerButton);
-        rootPanel.add(navBar);
+        rootLayoutPanel.add(navBar);
     }
 
     /**
      * The README file equivalent for the CS410J Phone Bill Application.
      *
-     * @return the README formatted in HTML
+     * @return the README as a Widget
      */
-    protected HTML readme() {
-        return new HTML("<head><title>Phone Bill App - Help</title></head><body>" +
+    protected Widget readme() {
+        _README.add(new HTML("<head><title>Phone Bill App - Help</title></head><body>" +
                 "<p><table width=\"600\"><col width=\"150\"><tr><td colspan=\"2\" align=\"center\">" +
                 "<h1><b>README - Phone Bill Application</b></h1></td></tr>" +
                 "<tr><td><div id=\"introduction\"><h3><u>Introduction</u></h3></div></td></tr>" +
@@ -125,54 +146,69 @@ public class PhoneBillGwt implements EntryPoint {
                 "appropriate.</td></tr>" +
 
                 "<tr><td colspan=\"2\" align=\"center\"><h5><i>CS410J Project 5: A Rich Internet Application for a Phone Bill</i></h5></td></tr>" +
-                "<tr><td colspan=\"2\" align=\"center\">&copy; Kathleen Tran Summer 2015</td></tr></table></p></body>");
+                "<tr><td colspan=\"2\" align=\"center\">&copy; Kathleen Tran Summer 2015</td></tr></table></p></body>"));
+        return _README.asWidget();
     }
 
-    protected HTML addCallPage() {
-        Button addCall = new Button("Add");
-        Button clear = new Button("Clear");
-        Button quickAdd = new Button("Quick Add");
-        Button clearQuickAdd = new Button("Clear");
-        TextBox customerNameBox = new TextBox();
-        customerNameBox.setPixelSize(413,15);
-        TextBox callerNumberBox = new TextBox();
-        TextBox calleeNumberBox = new TextBox();
-        TextBox startTimeBox = new TextBox();
-        TextBox endTimeBox = new TextBox();
-        TextBox quickAddBox = new TextBox();
-        quickAddBox.setPixelSize(413,15);
+    protected Widget addCallPage() {
+        customerNameBox.setPixelSize(413, 15);
+        quickAddBox.setPixelSize(413, 15);
+        callerNumberBox.setMaxLength(12);
+        calleeNumberBox.setMaxLength(12);
+        startTimeBox.setMaxLength(19);
+        endTimeBox.setMaxLength(19);
 
-        addCall.addClickHandler(new ClickHandler() {
-            public void onClick(ClickEvent clickEvent) {
-                PingServiceAsync async = GWT.create(PingService.class);
+        addCall.addClickHandler(addPhoneCallToServer());
 
-            }
-        });
-
-        return new HTML("<head><title>Phone Bill App - Add</title></head><body>" +
-                "<p><table width=\"600\"><col width=\"150\"><tr><td colspan=\"4\" align=\"center\">" +
+        _ADD.add(new HTML("<head><title>Phone Bill App - Add</title></head><body>" +
+                "<p><table width=\"600\" ><col width=\"150\"><tr><td colspan=\"4\" align=\"center\">" +
                 "<h1><b>Add a Phone Call</b></h1></td></tr>" +
                 "<tr><td colspan=\"1\" align=\"left\"><b>Customer Name</b></td><td colspan=\"3\">" + customerNameBox + "</td></tr>" +
                 "<tr><td><b>Caller Number</b></td><td>" + callerNumberBox + "</td><td><b>Callee Number</b></td><td>" + calleeNumberBox + "</td></tr>" +
                 "<tr><td><b>Call Began</b></td><td>" + startTimeBox + "</td><td><b>Call Ended</b></td><td>" + endTimeBox + "</td></tr>" +
-                "<tr></tr><tr><td colspan=\"1\"></td><td colspan=\"1\"></td><td colspan=\"1\"></td>" +
-                "<td colspan=\"1\" align=\"left\">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" + addCall + "&nbsp;&nbsp;" + clear + "</td></tr>" +
+                "<tr></tr><tr><td colspan=\"1\"></td><td colspan=\"1\"></td><td colspan=\"1\"></td></table></p></body>"));
+        _ADD.add(addCall);
+        _ADD.add(clear);
+        _ADD.add(new HTML("<p><table width=\"600\"><col width=\"150\">" +
                 "<tr style=\"height:20px\"></tr>" +
                 "<tr><td colspan=\"1\" align=\"left\"><b>Phone Call</b></td><td colspan=\"3\">" + quickAddBox + "</td></tr>" +
                 "<tr></tr><tr><td colspan=\"1\"></td><td colspan=\"1\"></td><td colspan=\"1\"></td>" +
-                "<td align=\"left\">&nbsp;" + quickAdd + "&nbsp;&nbsp;" + clearQuickAdd + "</td></tr>" +
-                "<tr style=\"height:75px\"><td colspan=\"4\"><hr width=\"90%\"></td></tr>" +
-                "</table></p></body>");
+                "</table></p></body>"));
+        _ADD.add(quickAdd);
+        _ADD.add(clearQuickAdd);
+        _ADD.add(new HTML("<p><table width=\"600\"><col width=\"150\">" +
+                "<tr style=\"height:50px\"><td colspan=\"4\"><hr width=\"90%\"></td></tr>" +
+                "</table></p>"));
+        return _ADD.asWidget();
     }
 
-    protected HTML printPage() {
-        Button printRecent = new Button("Print");
-        Button printOneBill = new Button("Print One");
-        Button printAllBills = new Button("Print All");
-        TextBox customerNameBox = new TextBox();
+    protected ClickHandler addPhoneCallToServer() {
+        return new ClickHandler() {
+            @Override
+            public void onClick(ClickEvent clickEvent) {
+                String[] userInputs = new String[5];
+                userInputs[0] = customerNameBox.getText();
+                userInputs[1] = callerNumberBox.getText();
+                userInputs[2] = calleeNumberBox.getText();
+                userInputs[3] = startTimeBox.getText();
+                userInputs[4] = endTimeBox.getText();
+
+                for (String input : userInputs) {
+                    if (input == null || input.equals("")) {
+                        Window.alert("One or more fields are empty!");
+                        break;
+                    }
+                }
+                
+
+            }
+        };
+    }
+
+    protected Widget printPage() {
         customerNameBox.setPixelSize(275, 15);
 
-        return new HTML("<head><title>Phone Bill App - Print</title></head><body>" +
+        _PRINT.add(new HTML("<head><title>Phone Bill App - Print</title></head><body>" +
                 "<p><table width=\"600\"><col width=\"150\"><tr><td colspan=\"4\" align=\"center\">" +
                 "<h1><b>Printing Phone Calls and Bills</b></h1></td></tr>" +
                 "<tr><td colspan=\"3\"><b>Most Recent Phone Call</b></td><td colspan=\"1\" align=\"right\">" + printRecent + "</td><tr>" +
@@ -181,15 +217,13 @@ public class PhoneBillGwt implements EntryPoint {
                 "<tr><td colspan=\"1\"><b>Phone Bill</b></td><td colspan=\"2\">" + customerNameBox + "</td>" +
                 "<td colspan=\"1\" align=\"right\">" + printOneBill + "&nbsp;&nbsp;" + printAllBills + "</td><tr>" +
                 "<tr style=\"height:75px\"><td colspan=\"4\"><hr width=\"90%\"></td></tr>" +
-                "</table></p></body>");
+                "</table></p></body>"));
+        return _PRINT.asWidget();
     }
 
-    protected HTML searchPage() {
-        Button search = new Button("Search");
-        TextBox startTimeBox = new TextBox();
-        TextBox endTimeBox = new TextBox();
+    protected Widget searchPage() {
 
-        return new HTML("<head><title>Phone Bill App - Search</title></head><body>" +
+        _SEARCH.add(new HTML("<head><title>Phone Bill App - Search</title></head><body>" +
                 "<p><table width=\"600\">" +
                 "<colgroup><col style=\"width:20%\"><col style=\"width:20%\"><col style=\"width:20%\"><col style=\"width:20%\"><col style=\"width:20%\"></colgroup>" +
                 "<tr><td colspan=\"5\" align=\"center\">" +
@@ -197,6 +231,7 @@ public class PhoneBillGwt implements EntryPoint {
                 "<tr><td><b>Between</b></td><td align=\"left\">" + startTimeBox + "</td><td align=\"center\"><b>and</b></td>" +
                 "<td>" + endTimeBox + "</td><td align=\"center\">" + search + "</td><tr>" +
                 "<tr style=\"height:75px\"><td colspan=\"5\"><hr width=\"90%\"></td></tr>" +
-                "</table></p></body>");
+                "</table></p></body>"));
+        return _SEARCH.asWidget();
     }
 }
