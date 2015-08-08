@@ -7,6 +7,8 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Implements the abstract methods that can be found within
@@ -52,7 +54,6 @@ public class PhoneCall extends AbstractPhoneCall {
     public String getEndTimeString() {
         return "END " + getEndTime();
     }
-
 
 //    /**
 //     * The phone number of the caller
@@ -360,4 +361,70 @@ public class PhoneCall extends AbstractPhoneCall {
 //        }
 //        return DateFormat.getTimeInstance(DateFormat.SHORT).format(date);
 //    }
+
+    /**
+     * Corrects the casing of some <code>String</code> that is the customer's name.
+     *
+     * @param nameInput some name provided by the user
+     * @return a String where the first letter of each name is capitalized while
+     * the remaining letters are lower cased. Each part of the name is separated
+     * by a single whitespace.
+     */
+    public String correctNameCasing(String nameInput) {
+        @SuppressWarnings("all")
+        String correctedName = new String();
+        String[] fullName = nameInput.split(" ");
+        for (String name : fullName) {
+            char firstLetter = Character.toUpperCase(name.charAt(0));
+            String remainingLetters = name.substring(1).toLowerCase();
+            correctedName = correctedName.concat(firstLetter + remainingLetters + " ");
+        }
+        return correctedName.substring(0, correctedName.length() - 1);
+    }
+
+    /**
+     * Determines whether or not some <code>String</code> is of the form
+     * <code>nnn-nnn-nnnn</code> where <code>n</code> is a number <code>0-9</code>.
+     *
+     * @param phoneNumberInput some phone number provided by the user
+     * @return True if the form is valid, otherwise false
+     */
+    public boolean isValidPhoneNumber(String phoneNumberInput) {
+        Pattern phoneNumberFormat = Pattern.compile("\\d{3}-\\d{3}-\\d{4}");
+        Matcher numberToBeChecked = phoneNumberFormat.matcher(phoneNumberInput);
+        return numberToBeChecked.matches();
+    }
+
+    /**
+     * Determines the validity of some <code>String</code> representative of the date
+     * and time both in regards to the values provided and to their formatting.
+     *
+     * @param dateInput the month, day, and year
+     * @param timeInput the hour and minute(s)
+     * @param timeMark  am/pm marker
+     * @return True if the both the date and formatting are valid, otherwise false
+     * @throws NumberFormatException when the argument cannot be parsed into an Integer
+     * @throws ParseException        when the date is invalid
+     */
+    public boolean isValidDateAndTime(String dateInput, String timeInput, String timeMark) throws
+            NumberFormatException, ParseException {
+        DateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy");
+        dateFormat.setLenient(false);
+        dateFormat.parse(dateInput);
+        return isValidTimeOfDay(timeInput) && (timeMark.equals("AM") || timeMark.equals("PM"));
+    }
+
+    /**
+     * Determines whether or not the time of some <code>String</code> is
+     * of the form <code>hh:mm</code> where the hour may be one digit if
+     * it is less than the value of nine.
+     *
+     * @param timeToCheck time
+     * @return True if the form is valid, otherwise false
+     */
+    public boolean isValidTimeOfDay(String timeToCheck) {
+        Pattern timeFormat = Pattern.compile("(0?[1-9]|1[0-2]):[0-5][0-9]");
+        Matcher timeToBeChecked = timeFormat.matcher(timeToCheck);
+        return timeToBeChecked.matches();
+    }
 }

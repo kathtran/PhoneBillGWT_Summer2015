@@ -5,6 +5,11 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.i18n.client.DateTimeFormat;
+import com.google.gwt.i18n.client.DefaultDateTimeFormatInfo;
+import com.google.gwt.i18n.shared.DateTimeFormatInfo;
+import com.google.gwt.regexp.shared.MatchResult;
+import com.google.gwt.regexp.shared.RegExp;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.*;
@@ -12,7 +17,9 @@ import com.google.gwt.user.client.ui.Button;
 import edu.pdx.cs410J.AbstractPhoneCall;
 import edu.pdx.cs410J.AbstractPhoneBill;
 
-import java.awt.*;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Collection;
 
 /**
@@ -42,6 +49,12 @@ public class PhoneBillGwt implements EntryPoint {
     private final Button printAllBills = new Button("Print All");
     private final Button search = new Button("Search");
     private final Button pingServerButton = new Button("Ping Server");
+
+    private static String customer;
+    private static String caller;
+    private static String callee;
+    private static String startTime;
+    private static String endTime;
 
     public void onModuleLoad() {
 
@@ -140,13 +153,12 @@ public class PhoneBillGwt implements EntryPoint {
     protected Widget addCallPage() {
         customerNameBox.setPixelSize(413, 15);
         quickAddBox.setPixelSize(413, 15);
+        callerNumberBox.setMaxLength(12);
+        calleeNumberBox.setMaxLength(12);
+        startTimeBox.setMaxLength(19);
+        endTimeBox.setMaxLength(19);
 
-        addCall.addClickHandler(new ClickHandler() {
-            public void onClick(ClickEvent clickEvent) {
-                PingServiceAsync async = GWT.create(PingService.class);
-
-            }
-        });
+        addCall.addClickHandler(addPhoneCallToServer());
 
         _ADD.add(new HTML("<head><title>Phone Bill App - Add</title></head><body>" +
                 "<p><table width=\"600\" ><col width=\"150\"><tr><td colspan=\"4\" align=\"center\">" +
@@ -168,6 +180,29 @@ public class PhoneBillGwt implements EntryPoint {
                 "<tr style=\"height:50px\"><td colspan=\"4\"><hr width=\"90%\"></td></tr>" +
                 "</table></p>"));
         return _ADD.asWidget();
+    }
+
+    protected ClickHandler addPhoneCallToServer() {
+        return new ClickHandler() {
+            @Override
+            public void onClick(ClickEvent clickEvent) {
+                String[] userInputs = new String[5];
+                userInputs[0] = customerNameBox.getText();
+                userInputs[1] = callerNumberBox.getText();
+                userInputs[2] = calleeNumberBox.getText();
+                userInputs[3] = startTimeBox.getText();
+                userInputs[4] = endTimeBox.getText();
+
+                for (String input : userInputs) {
+                    if (input == null || input.equals("")) {
+                        Window.alert("One or more fields are empty!");
+                        break;
+                    }
+                }
+                
+
+            }
+        };
     }
 
     protected Widget printPage() {
