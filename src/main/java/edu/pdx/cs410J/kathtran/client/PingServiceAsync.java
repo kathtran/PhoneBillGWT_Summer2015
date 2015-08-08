@@ -5,9 +5,6 @@ import edu.pdx.cs410J.AbstractPhoneBill;
 
 /**
  * The client-side interface to the ping service
- *
- * @author Kathleen Tran
- * @version 5.0
  */
 public interface PingServiceAsync {
 
