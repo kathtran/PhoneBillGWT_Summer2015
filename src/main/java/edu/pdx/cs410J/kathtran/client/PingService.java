@@ -37,4 +37,12 @@ public interface PingService extends RemoteService {
      * @return the phone bill containing the corresponding phone call record
      */
     AbstractPhoneBill printMostRecentlyAddedPhoneCall(String customerName);
+
+    /**
+     * Prints out the contents of the entire phone bill for the specified customer.
+     *
+     * @param customerName some name
+     * @return the phone bill that belongs to the specified customer
+     */
+    AbstractPhoneBill printPhoneBill(String customerName);
 }

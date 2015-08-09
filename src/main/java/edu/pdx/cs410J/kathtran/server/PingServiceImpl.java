@@ -42,7 +42,22 @@ public class PingServiceImpl extends RemoteServiceServlet implements PingService
      */
     @Override
     public AbstractPhoneBill printMostRecentlyAddedPhoneCall(String customerName) {
-        return data.get(customerName);
+        if (data.get(customerName) != null)
+            return data.get(customerName);
+        return null;
+    }
+
+    /**
+     * Prints out the contents of the entire phone bill for the specified customer.
+     *
+     * @param customerName some name
+     * @return the phone bill that belongs to the specified customer
+     */
+    @Override
+    public AbstractPhoneBill printPhoneBill(String customerName) {
+        if (data.get(customerName) != null)
+            return data.get(customerName);
+        return null;
     }
 
     /**

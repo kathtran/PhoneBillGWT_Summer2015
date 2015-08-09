@@ -35,4 +35,12 @@ public interface PingServiceAsync {
      * @param asyncCallback the phone bill that belongs to the specified customer
      */
     void printMostRecentlyAddedPhoneCall(String customerName, AsyncCallback<AbstractPhoneBill> asyncCallback);
+
+    /**
+     * Return the phone bill for the specified customer.
+     *
+     * @param customerName some name
+     * @param asyncCallback the phone bill that belongs to the specified customer
+     */
+    void printPhoneBill(String customerName, AsyncCallback<AbstractPhoneBill> asyncCallback);
 }

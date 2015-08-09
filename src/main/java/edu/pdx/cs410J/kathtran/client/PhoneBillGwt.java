@@ -149,6 +149,8 @@ public class PhoneBillGwt implements EntryPoint {
         PRINT.add(printPageBillOutput);
 
         printCallButton.addClickHandler(printMostRecentlyAddedPhoneCall());
+        printBillButton.addClickHandler(printPhoneBill());
+//        printAllButton.addClickHandler(printAllPhoneBills());
         // <------- END PRINT PAGE ------->
 
         // <------- BUILDING SEARCH PAGE ------->
@@ -276,8 +278,10 @@ public class PhoneBillGwt implements EntryPoint {
             public void onClick(ClickEvent clickEvent) {
                 customerName = printPageCustomerField1.getText();
 
-                if (customerName.isEmpty() || customerName.equals(""))
+                if (customerName.isEmpty() || customerName.equals("")) {
                     Window.alert("Please enter a customer name!");
+                    return;
+                }
 
                 async.printMostRecentlyAddedPhoneCall(customerName, new AsyncCallback<AbstractPhoneBill>() {
                     @Override
@@ -287,10 +291,45 @@ public class PhoneBillGwt implements EntryPoint {
 
                     @Override
                     public void onSuccess(AbstractPhoneBill phoneBill) {
-                        if (phoneBill.getCustomer().isEmpty())
-                            Window.alert("The customer could not be found!");
-                        PhoneBill bill = (PhoneBill) phoneBill;
-                        printPageCallOutput.setText(bill.prettyPrintMostRecentCall());
+                        if (phoneBill != null) {
+                            PhoneBill bill = (PhoneBill) phoneBill;
+                            printPageCallOutput.setText(bill.prettyPrintMostRecentCall());
+                        } else printPageCallOutput.setText("Customer could not be found --");
+                    }
+                });
+            }
+        };
+    }
+
+    /**
+     * <------- PRINT PAGE ------->
+     * Prints out the phone bill for the specified customer.
+     *
+     * @return handled click event for the Print One button
+     */
+    private ClickHandler printPhoneBill() {
+        return new ClickHandler() {
+            @Override
+            public void onClick(ClickEvent clickEvent) {
+                customerName = printPageCustomerField2.getText();
+
+                if (customerName.isEmpty() || customerName.equals("")) {
+                    Window.alert("Please enter a customer name!");
+                    return;
+                }
+
+                async.printPhoneBill(customerName, new AsyncCallback<AbstractPhoneBill>() {
+                    @Override
+                    public void onFailure(Throwable throwable) {
+                        Window.alert(throwable.toString());
+                    }
+
+                    @Override
+                    public void onSuccess(AbstractPhoneBill phoneBill) {
+                        if (phoneBill != null)
+                            printPageBillOutput.add(new HTML(((PhoneBill) phoneBill).prettyPrint()));
+                        else
+                            printPageBillOutput.add(new HTML("Customer could not be found --"));
                     }
                 });
             }
