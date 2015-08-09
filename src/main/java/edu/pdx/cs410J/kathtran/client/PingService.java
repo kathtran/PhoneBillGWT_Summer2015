@@ -18,5 +18,5 @@ public interface PingService extends RemoteService {
      */
     AbstractPhoneBill ping();
 
-    AbstractPhoneBill getCustomerName(String name);
+    AbstractPhoneBill addNewPhoneCall(String customerName, String callerNumber, String calleeNumber, String startTime, String endTime);
 }
