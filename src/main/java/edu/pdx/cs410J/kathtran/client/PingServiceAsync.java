@@ -15,4 +15,6 @@ public interface PingServiceAsync {
      * Return the current date/time on the server
      */
     void ping(AsyncCallback<AbstractPhoneBill> async);
+
+    void getCustomerName(String name, AsyncCallback<AbstractPhoneBill> asyncCallback);
 }

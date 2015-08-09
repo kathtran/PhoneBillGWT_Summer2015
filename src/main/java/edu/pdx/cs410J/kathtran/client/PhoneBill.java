@@ -24,11 +24,18 @@ import java.util.Collections;
  * @version 5.0
  */
 public class PhoneBill extends AbstractPhoneBill {
-    private Collection<AbstractPhoneCall> calls = new ArrayList<AbstractPhoneCall>();
+    private String customer;
+    private Collection<AbstractPhoneCall> calls = new ArrayList<>();
+
+    public PhoneBill() {}
+
+    public PhoneBill(String name) {
+        this.customer = name;
+    }
 
     @Override
     public String getCustomer() {
-        return "CS410J";
+        return customer;
     }
 
     @Override
@@ -77,7 +84,7 @@ public class PhoneBill extends AbstractPhoneBill {
 //     * @return the name of the customer whose phone bill this is
 //     */
 //    @Override
-//    public String getCustomer() {
+//    public String getCustomerName() {
 //        return this.customer;
 //    }
 //

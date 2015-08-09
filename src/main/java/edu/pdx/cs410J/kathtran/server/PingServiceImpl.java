@@ -22,6 +22,12 @@ public class PingServiceImpl extends RemoteServiceServlet implements PingService
         return phonebill;
     }
 
+    @Override
+    public AbstractPhoneBill getCustomerName(String name) {
+        PhoneBill phoneBill = new PhoneBill(name);
+        return phoneBill;
+    }
+
     /**
      * Log unhandled exceptions to standard error
      *

@@ -16,6 +16,7 @@ public interface PingService extends RemoteService {
     /**
      * Returns the a dummy Phone Bill
      */
-    public AbstractPhoneBill ping();
+    AbstractPhoneBill ping();
 
+    AbstractPhoneBill getCustomerName(String name);
 }
