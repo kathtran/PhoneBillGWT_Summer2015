@@ -64,7 +64,8 @@ public class PhoneBill extends AbstractPhoneBill {
     /**
      * Default constructor.
      */
-    public PhoneBill() {}
+    public PhoneBill() {
+    }
 
     /**
      * Constructor that specifies the customer's name.
@@ -145,5 +146,16 @@ public class PhoneBill extends AbstractPhoneBill {
             entireBill += phoneCall.prettyPrint();
         }
         return entireBill;
+    }
+
+    /**
+     * An output message for the client to display when a phone call has been added.
+     *
+     * @param call some phone call
+     * @return the message notifying that the specified phone call has been added to
+     * its respective customer's phone bill
+     */
+    public String callAddedMessage(PhoneCall call) {
+        return call.toString() + " has been added to " + customer + "'s phone bill!";
     }
 }

@@ -17,7 +17,6 @@ import edu.pdx.cs410J.AbstractPhoneBill;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Date;
 
 /**
  * A basic GWT class that makes sure that we can send an Phone Bill back from the server
@@ -27,6 +26,7 @@ import java.util.Date;
  */
 public class PhoneBillGwt implements EntryPoint {
     private final RootLayoutPanel rootLayoutPanel = RootLayoutPanel.get();
+    private final HTML pageDivider = new HTML("<table width=\"615\"><tr height=\"50\"><td><hr width=\"90%\"></td></tr></table>");
     private final ScrollPanel README = new ScrollPanel(readme());
     private final VerticalPanel ADD = new VerticalPanel();
     private final HorizontalPanel addHPan1 = new HorizontalPanel();
@@ -36,6 +36,7 @@ public class PhoneBillGwt implements EntryPoint {
     private final VerticalPanel addVPan2 = new VerticalPanel();
     private final VerticalPanel addVPan3 = new VerticalPanel();
     private final VerticalPanel addVPan4 = new VerticalPanel();
+    private final Label printOut = new Label("");
     private TextBox customerField;
     private TextBox callerField;
     private TextBox calleeField;
@@ -56,11 +57,11 @@ public class PhoneBillGwt implements EntryPoint {
         // <------- BUILDING ADD PAGE ------->
         loadAddPageLayout();
         ADD.getElement().getStyle().setBorderStyle(Style.BorderStyle.NONE);
-        ADD.add(new HTML("<table width=\"600px\"><tr><td align=\"center\"><h1>Add a Phone Call</h1></td></tr></table>"));
+        ADD.add(new HTML("<table width=\"615px\"><tr><td align=\"center\"><h1>Add a Phone Call</h1></td></tr></table>"));
 
         addHPan1.add(new Label("Customer Name"));
         addHPan1.add(customerField = new TextBox());
-        customerField.setPixelSize(435, 15);
+        customerField.setPixelSize(440, 15);
         customerField.setMaxLength(30);
         customerField.getElement().setAttribute("placeholder", "kathtran");
 
@@ -98,6 +99,8 @@ public class PhoneBillGwt implements EntryPoint {
         ADD.add(addHPan1);
         ADD.add(addHPan2);
         ADD.add(addHPan3);
+        ADD.add(pageDivider);
+        ADD.add(printOut);
 
         addButton.addClickHandler(addNewPhoneCall());
         clearButton.addClickHandler(clearPhoneCallFields());
@@ -157,10 +160,11 @@ public class PhoneBillGwt implements EntryPoint {
                         break;
                     case 0:
                         Window.alert("Please fill in the entire form!");
-                        break;
+                        return;
                     case -1:
                         Window.alert("Please enter phone numbers in the correct format");
                     case -2:
+                    case -3:
                         Window.alert("Please enter times in the correct format");
                     default:
                         return;
@@ -174,8 +178,9 @@ public class PhoneBillGwt implements EntryPoint {
 
                     @Override
                     public void onSuccess(AbstractPhoneBill phoneBill) {
+                        Window.alert("The call has been added!");
                         PhoneBill bill = (PhoneBill) phoneBill;
-                        Window.alert(bill.getMostRecentPhoneCall().toString());
+                        printOut.setText(bill.callAddedMessage((PhoneCall) bill.getMostRecentPhoneCall()));
                     }
                 });
             }
@@ -213,7 +218,7 @@ public class PhoneBillGwt implements EntryPoint {
      */
     protected HTML readme() {
         return new HTML("<head><title>Phone Bill App - Help</title></head><body>" +
-                "<p><table width=\"600\"><col width=\"150\"><tr><td colspan=\"2\" align=\"center\">" +
+                "<p><table width=\"615\"><col width=\"150\"><tr><td colspan=\"2\" align=\"center\">" +
                 "<h1><b>README - Phone Bill Application</b></h1></td></tr>" +
                 "<tr><td><div id=\"introduction\"><h3><u>Introduction</u></h3></div></td></tr>" +
                 "<tr><td valign=\"top\"><b>v1.0</b></td><td>Welcome to the Phone Bill Application! This is a " +
@@ -288,14 +293,17 @@ public class PhoneBillGwt implements EntryPoint {
                 return 0;
         }
 
-        if (!isValidPhoneNumber(callerNumber) || !isValidPhoneNumber(calleeNumber)) {
+        if (!isValidPhoneNumber(callerNumber) || !isValidPhoneNumber(calleeNumber))
             return -1;
-        }
+        String[] splitStartTime = startTime.split(" ");
+        String[] splitEndTime = endTime.split(" ");
+        if (!isValidTimeOfDay(splitStartTime[1]) || !isValidTimeOfDay(splitEndTime[1]))
+            return -2;
         try {
             formatDate(startTime);
             formatDate(endTime);
         } catch (IllegalArgumentException ex) {
-            return -2;
+            return -3;
         }
         return 1;
     }
@@ -304,14 +312,27 @@ public class PhoneBillGwt implements EntryPoint {
      * Determines whether or not some <code>String</code> is of the form
      * <code>nnn-nnn-nnnn</code> where <code>n</code> is a number <code>0-9</code>.
      *
-     * @param phoneNumberInput some phone number
+     * @param phoneNumberInput phone number
      * @return True if the form is valid, otherwise false
      */
     private boolean isValidPhoneNumber(String phoneNumberInput) {
         RegExp regExp = RegExp.compile("\\d{3}-\\d{3}-\\d{4}");
         MatchResult numberToBeChecked = regExp.exec(phoneNumberInput);
-        boolean match = numberToBeChecked != null;
-        return match;
+        return numberToBeChecked != null;
+    }
+
+    /**
+     * Determines whether or not the time of some <code>String</code> is
+     * of the form <code>hh:mm</code> where the hour may be one digit if
+     * it is less than the value of nine.
+     *
+     * @param dateAndTimeInput time
+     * @return True if the form is valid, otherwise false
+     */
+    private boolean isValidTimeOfDay(String dateAndTimeInput) {
+        RegExp regExp = RegExp.compile("(0?[1-9]|1[0-2]):[0-5][0-9]");
+        MatchResult dateAndTimeToBeChecked = regExp.exec(dateAndTimeInput);
+        return dateAndTimeToBeChecked != null;
     }
 
     /**
@@ -329,11 +350,11 @@ public class PhoneBillGwt implements EntryPoint {
     }
 
     private void loadAddPageLayout() {
-        ADD.setSize("600px", "300px");
+        ADD.setSize("615px", "400px");
 
-        addHPan1.setSize("600px", "100%");
-        addHPan2.setSize("600px", "100%");
-        addHPan3.setSize("600px", "100%");
+        addHPan1.setSize("615px", "100%");
+        addHPan2.setSize("615px", "100%");
+        addHPan3.setSize("615px", "100%");
 
         addHPan1.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
         addHPan2.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
@@ -348,5 +369,7 @@ public class PhoneBillGwt implements EntryPoint {
         addVPan2.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
         addVPan3.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_RIGHT);
         addVPan4.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
+
+        printOut.setPixelSize(615, 50);
     }
 }
