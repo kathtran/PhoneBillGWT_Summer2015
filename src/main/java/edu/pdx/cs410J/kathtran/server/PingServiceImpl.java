@@ -61,6 +61,18 @@ public class PingServiceImpl extends RemoteServiceServlet implements PingService
     }
 
     /**
+     * Prints out all phone bill records on file.
+     *
+     * @return the mapping that contains all customers and their phone bills.
+     */
+    @Override
+    public Map printAllPhoneBills() {
+        if (!data.isEmpty())
+            return data;
+        return null;
+    }
+
+    /**
      * Log unhandled exceptions to standard error
      *
      * @param unhandled The exception that wasn't handled

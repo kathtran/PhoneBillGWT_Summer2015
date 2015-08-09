@@ -4,6 +4,8 @@ import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 import edu.pdx.cs410J.AbstractPhoneBill;
 
+import java.util.Map;
+
 /**
  * A GWT remote service that returns a dummy Phone Bill
  *
@@ -45,4 +47,11 @@ public interface PingService extends RemoteService {
      * @return the phone bill that belongs to the specified customer
      */
     AbstractPhoneBill printPhoneBill(String customerName);
+
+    /**
+     * Prints out all phone bill records on file.
+     *
+     * @return the mapping that contains all customers and their phone bills.
+     */
+    Map printAllPhoneBills();
 }

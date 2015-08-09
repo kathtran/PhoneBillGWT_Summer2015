@@ -15,6 +15,8 @@ import com.google.gwt.user.client.ui.Button;
 import edu.pdx.cs410J.AbstractPhoneBill;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * A basic GWT class that makes sure that we can send an Phone Bill back from the server
@@ -150,6 +152,7 @@ public class PhoneBillGwt implements EntryPoint {
 
         printCallButton.addClickHandler(printMostRecentlyAddedPhoneCall());
         printBillButton.addClickHandler(printPhoneBill());
+        printAllButton.addClickHandler(printAllPhoneBills());
 //        printAllButton.addClickHandler(printAllPhoneBills());
         // <------- END PRINT PAGE ------->
 
@@ -278,7 +281,7 @@ public class PhoneBillGwt implements EntryPoint {
             public void onClick(ClickEvent clickEvent) {
                 customerName = printPageCustomerField1.getText();
 
-                if (customerName.isEmpty() || customerName.equals("")) {
+                if (customerName == null || customerName.equals("")) {
                     Window.alert("Please enter a customer name!");
                     return;
                 }
@@ -313,7 +316,7 @@ public class PhoneBillGwt implements EntryPoint {
             public void onClick(ClickEvent clickEvent) {
                 customerName = printPageCustomerField2.getText();
 
-                if (customerName.isEmpty() || customerName.equals("")) {
+                if (customerName == null || customerName.equals("")) {
                     Window.alert("Please enter a customer name!");
                     return;
                 }
@@ -330,6 +333,45 @@ public class PhoneBillGwt implements EntryPoint {
                             printPageBillOutput.add(new HTML(((PhoneBill) phoneBill).prettyPrint()));
                         else
                             printPageBillOutput.add(new HTML("Customer could not be found --"));
+                    }
+                });
+            }
+        };
+    }
+
+    /**
+     * <------- PRINT PAGE ------->
+     * Prints out all of the phone bills that have been stored for the session.
+     *
+     * @return handled click event for the Print All button
+     */
+    private ClickHandler printAllPhoneBills() {
+        return new ClickHandler() {
+            @Override
+            public void onClick(ClickEvent clickEvent) {
+                customerName = printPageCustomerField2.getText();
+
+                if (customerName == null || customerName.equals("")) {
+                    Window.alert("Please enter a customer name!");
+                    return;
+                }
+
+                async.printAllPhoneBills(new AsyncCallback<Map>() {
+                    @Override
+                    public void onFailure(Throwable throwable) {
+                        Window.alert(throwable.toString());
+                    }
+
+                    @Override
+                    public void onSuccess(Map map) {
+                        if (!map.isEmpty()) {
+                            String entireBill = new String();
+                            for (Object entry : map.entrySet()) {
+                                PhoneBill bill = (PhoneBill) entry;
+                                entireBill += bill.prettyPrint();
+                            }
+                            printPageBillOutput.add(new HTML(entireBill));
+                        } else printPageBillOutput.add(new HTML("No phone bills currently exist --"));
                     }
                 });
             }
@@ -356,7 +398,7 @@ public class PhoneBillGwt implements EntryPoint {
         data.add(endTime);
 
         for (String item : data) {
-            if (item.isEmpty() || item.equals(""))
+            if (item == null || item.equals(""))
                 return 0;
         }
 

@@ -3,6 +3,8 @@ package edu.pdx.cs410J.kathtran.client;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import edu.pdx.cs410J.AbstractPhoneBill;
 
+import java.util.Map;
+
 /**
  * The client-side interface to the ping service
  *
@@ -39,8 +41,15 @@ public interface PingServiceAsync {
     /**
      * Return the phone bill for the specified customer.
      *
-     * @param customerName some name
+     * @param customerName  some name
      * @param asyncCallback the phone bill that belongs to the specified customer
      */
     void printPhoneBill(String customerName, AsyncCallback<AbstractPhoneBill> asyncCallback);
+
+    /**
+     * Return the mapping of customers to phone bills.
+     *
+     * @param asyncCallback the mapping that contains all phone bills on record
+     */
+    void printAllPhoneBills(AsyncCallback<Map> asyncCallback);
 }
