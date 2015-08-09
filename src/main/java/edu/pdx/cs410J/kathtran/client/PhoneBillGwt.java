@@ -192,7 +192,6 @@ public class PhoneBillGwt implements EntryPoint {
         SEARCH.add(addPageOutput);
 
 //        searchButton.addClickHandler(searchForCalls());
-
         // <------- END SEARCH PAGE ------->
 
 //        Button pingServerButton = new Button("Ping Server");
@@ -382,13 +381,6 @@ public class PhoneBillGwt implements EntryPoint {
         return new ClickHandler() {
             @Override
             public void onClick(ClickEvent clickEvent) {
-                customerName = printPageCustomerField2.getText();
-
-                if (customerName == null || customerName.equals("")) {
-                    Window.alert("Please enter a customer name!");
-                    return;
-                }
-
                 async.printAllPhoneBills(new AsyncCallback<Map>() {
                     @Override
                     public void onFailure(Throwable throwable) {
