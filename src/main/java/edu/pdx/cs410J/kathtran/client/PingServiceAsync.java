@@ -16,5 +16,5 @@ public interface PingServiceAsync {
      */
     void ping(AsyncCallback<AbstractPhoneBill> async);
 
-    void getCustomerName(String name, AsyncCallback<AbstractPhoneBill> asyncCallback);
+    void addNewPhoneCall(String customerName, String callerNumber, String calleeNumber, String startTime, String name, AsyncCallback<AbstractPhoneBill> asyncCallback);
 }

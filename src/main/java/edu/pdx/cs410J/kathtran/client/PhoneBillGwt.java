@@ -5,6 +5,7 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.regexp.shared.MatchResult;
 import com.google.gwt.regexp.shared.RegExp;
 import com.google.gwt.user.client.Window;
@@ -14,7 +15,9 @@ import com.google.gwt.user.client.ui.Button;
 import edu.pdx.cs410J.AbstractPhoneCall;
 import edu.pdx.cs410J.AbstractPhoneBill;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Date;
 
 /**
  * A basic GWT class that makes sure that we can send an Phone Bill back from the server
@@ -41,6 +44,13 @@ public class PhoneBillGwt implements EntryPoint {
     private Button addButton;
     private Button clearButton;
 
+    private String customerName;
+    private String callerNumber;
+    private String calleeNumber;
+    private String startTime;
+    private String endTime;
+    private final PingServiceAsync async = GWT.create(PingService.class);
+
     public void onModuleLoad() {
 
         // <------- BUILDING ADD PAGE ------->
@@ -52,23 +62,27 @@ public class PhoneBillGwt implements EntryPoint {
         addHPan1.add(customerField = new TextBox());
         customerField.setPixelSize(435, 15);
         customerField.setMaxLength(30);
-        customerField.getElement().setAttribute("placeholder", "Jane Doe");
+        customerField.getElement().setAttribute("placeholder", "kathtran");
 
         addVPan1.add(new Label("Caller Number"));
         addVPan1.add(new Label("Call Began"));
 
         addVPan2.add(callerField = new TextBox());
         callerField.setMaxLength(12);
+        callerField.getElement().setAttribute("placeholder", "ex. 000-000-0000");
         addVPan2.add(startField = new TextBox());
         startField.setMaxLength(19);
+        startField.getElement().setAttribute("placeholder", "ex. 1/1/2015 12:00 am");
 
         addVPan3.add(new Label("Callee Number"));
         addVPan3.add(new Label("Call Ended"));
 
         addVPan4.add(calleeField = new TextBox());
         calleeField.setMaxLength(12);
+        calleeField.getElement().setAttribute("placeholder", "ex. 111-111-1111");
         addVPan4.add(endField = new TextBox());
         startField.setMaxLength(19);
+        endField.getElement().setAttribute("placeholder", "ex. 2/20/2015 2:00 pm");
 
         addHPan2.add(addVPan1);
         addHPan2.add(addVPan2);
@@ -124,23 +138,35 @@ public class PhoneBillGwt implements EntryPoint {
     }
 
     /**
-     * Adding a phone call to the phone bill.
+     * Adds a phone call to the phone bill.
      *
      * @return handled click event for the Add button
      */
     private ClickHandler addNewPhoneCall() {
         return new ClickHandler() {
             public void onClick(ClickEvent clickEvent) {
-                String phoneCall = customerField.getText();
+                customerName = customerField.getText();
+                callerNumber = callerField.getText();
+                calleeNumber = calleeField.getText();
+                startTime = startField.getText();
+                endTime = endField.getText();
 
-                if (phoneCall.isEmpty() || phoneCall.equals("")) {
-                    Window.alert("The form is blank!");
-                    return;
+                int check = checkParams(customerName, callerNumber, calleeNumber, startTime, endTime);
+                switch (check) {
+                    case 1:
+                        break;
+                    case 0:
+                        Window.alert("Please fill in the entire form!");
+                        break;
+                    case -1:
+                        Window.alert("Please enter phone numbers in the correct format");
+                    case -2:
+                        Window.alert("Please enter times in the correct format");
+                    default:
+                        return;
                 }
 
-                Window.alert("CUSTOMER IS: " + phoneCall);
-                PingServiceAsync async = GWT.create(PingService.class);
-                async.getCustomerName(phoneCall, new AsyncCallback<AbstractPhoneBill>() {
+                async.addNewPhoneCall(customerName, callerNumber, calleeNumber, startTime, endTime, new AsyncCallback<AbstractPhoneBill>() {
                     @Override
                     public void onFailure(Throwable throwable) {
                         Window.alert(throwable.toString());
@@ -148,7 +174,8 @@ public class PhoneBillGwt implements EntryPoint {
 
                     @Override
                     public void onSuccess(AbstractPhoneBill phoneBill) {
-                        Window.alert(phoneBill.getCustomer());
+                        PhoneBill bill = (PhoneBill) phoneBill;
+                        Window.alert(bill.getMostRecentPhoneCall().toString());
                     }
                 });
             }
@@ -238,6 +265,42 @@ public class PhoneBillGwt implements EntryPoint {
     }
 
     /**
+     * Perform a check on all parameters to see if all arguments have been provided
+     * and are valid to build a new phone call record.
+     *
+     * @param customerName some name that may consist of one or more words
+     * @param callerNumber the number of the person who called
+     * @param calleeNumber the number of the person called
+     * @param startTime    the time at which the call began
+     * @param endTime      the time at which the call ended
+     * @return true if there are no missing/empty parameters, otherwise false
+     */
+    private int checkParams(String customerName, String callerNumber, String calleeNumber, String startTime, String endTime) {
+        ArrayList<String> data = new ArrayList<>();
+        data.add(customerName);
+        data.add(callerNumber);
+        data.add(calleeNumber);
+        data.add(startTime);
+        data.add(endTime);
+
+        for (String item : data) {
+            if (item.isEmpty() || item.equals(""))
+                return 0;
+        }
+
+        if (!isValidPhoneNumber(callerNumber) || !isValidPhoneNumber(calleeNumber)) {
+            return -1;
+        }
+        try {
+            formatDate(startTime);
+            formatDate(endTime);
+        } catch (IllegalArgumentException ex) {
+            return -2;
+        }
+        return 1;
+    }
+
+    /**
      * Determines whether or not some <code>String</code> is of the form
      * <code>nnn-nnn-nnnn</code> where <code>n</code> is a number <code>0-9</code>.
      *
@@ -249,6 +312,20 @@ public class PhoneBillGwt implements EntryPoint {
         MatchResult numberToBeChecked = regExp.exec(phoneNumberInput);
         boolean match = numberToBeChecked != null;
         return match;
+    }
+
+    /**
+     * Determines whether or not some <code>String</code> is of the form
+     * <code>MM/dd/yyyy hh:mm a</code> where the leading zero in the month,
+     * day, and hour may be omitted.
+     *
+     * @param dateTimeInput some date, time, and marker
+     * @return the date formatted properly
+     * @throws IllegalArgumentException when the date cannot be parsed
+     */
+    private String formatDate(String dateTimeInput) throws IllegalArgumentException {
+        DateTimeFormat dateTimeFormat = DateTimeFormat.getFormat("MM/dd/yyyy h:mm a");
+        return dateTimeFormat.parseStrict(dateTimeInput).toString();
     }
 
     private void loadAddPageLayout() {
