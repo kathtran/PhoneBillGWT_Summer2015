@@ -27,34 +27,6 @@ import java.util.Date;
  */
 public class PhoneCall extends AbstractPhoneCall implements Comparable<PhoneCall> {
 
-//    @Override
-//    public String getCaller() {
-//        return "123-345-6789";
-//    }
-//
-//    @Override
-//    public Date getStartTime() {
-//        return new Date();
-//    }
-//
-//    public String getStartTimeString() {
-//        return "START " + getStartTime();
-//    }
-//
-//    @Override
-//    public String getCallee() {
-//        return "345-677-2341";
-//    }
-//
-//    public Date getEndTime() {
-//        return new Date();
-//    }
-//
-//    public String getEndTimeString() {
-//        return "END " + getEndTime();
-//    }
-
-
     /**
      * The phone number of the caller
      */
@@ -97,19 +69,6 @@ public class PhoneCall extends AbstractPhoneCall implements Comparable<PhoneCall
     }
 
     /**
-     * Parses the output from the toString method of the AbstractPhoneCall class.
-     *
-     * @param call some string detailing data from the phone call
-     */
-    public PhoneCall(String call) {
-        String[] split = call.split(" ");
-        callerNumber = split[3];
-        calleeNumber = split[5];
-        startTime = split[7] + " " + split[8] + " " + split[9];
-        endTime = split[11] + " " + split[12] + " " + split[13];
-    }
-
-    /**
      * @return the phone number of the person who originated this phone call
      */
     @Override
@@ -141,6 +100,16 @@ public class PhoneCall extends AbstractPhoneCall implements Comparable<PhoneCall
     @Override
     public String getEndTimeString() {
         return DateTimeFormat.getFormat("M/d/yy h:mm a").format(getDateObject(this.endTime));
+    }
+
+    /**
+     * Gets the SHORT date format equivalent for some date <code>String</code>.
+     *
+     * @param date some date, time, and marker
+     * @return the date properly formatted to SHORT standards
+     */
+    public String getShortDateFormat(String date) {
+        return DateTimeFormat.getFormat("M/d/yy h:mm a").format(getDateObject(date));
     }
 
     /**
@@ -220,6 +189,29 @@ public class PhoneCall extends AbstractPhoneCall implements Comparable<PhoneCall
         } catch (NumberFormatException ex) {
             return -2;
         }
+    }
+
+    /**
+     * Compares the time between two <code>String</code> objects and returns
+     * some value based on their relation. This is used for the Search feature.
+     *
+     * @param thisTime some time String
+     * @param thatTime some time String
+     * @return a negative integer, zero, or a positive integer as this thatTime
+     * is less than, equal to, or greater than the specified thatTime.
+     * @throws NullPointerException if the specified thatTime is null
+     */
+    public int compareTime(String thisTime, String thatTime) throws NullPointerException {
+        Date thisDate = getDateObject(thisTime);
+        Date thatDate = getDateObject(thatTime);
+
+        if (thisDate.equals(thatDate))
+            return 0;
+        if (thisDate.before(thatDate))
+            return -1;
+        if (thisDate.after(thatDate))
+            return 1;
+        return 2;
     }
 
     /**

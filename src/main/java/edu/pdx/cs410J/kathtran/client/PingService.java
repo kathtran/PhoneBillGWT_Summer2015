@@ -4,21 +4,14 @@ import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 import edu.pdx.cs410J.AbstractPhoneBill;
 
-import java.util.Map;
-
 /**
- * A GWT remote service that returns a dummy Phone Bill
+ * A GWT remote service.
  *
  * @author Kathleen Tran
  * @version 5.0
  */
 @RemoteServiceRelativePath("ping")
 public interface PingService extends RemoteService {
-
-    /**
-     * Returns the a dummy Phone Bill
-     */
-    AbstractPhoneBill ping();
 
     /**
      * Adds a new phone call record to the specified customer's phone bill.
@@ -51,7 +44,17 @@ public interface PingService extends RemoteService {
     /**
      * Prints out all phone bill records on file.
      *
-     * @return the mapping that contains all customers and their phone bills.
+     * @return a String containing all phone bills, pretty printed
      */
-    Map printAllPhoneBills();
+    String printAllPhoneBills();
+
+    /**
+     * Prints out all calls that began during the specified time frame for the specified customer.
+     *
+     * @param customerName some name
+     * @param searchAfter  the lower bound to search for calls in
+     * @param searchBefore the upper bound to search for calls in
+     * @return a String containing all qualifying phone calls, pretty printed
+     */
+    String searchForCalls(String customerName, String searchAfter, String searchBefore);
 }

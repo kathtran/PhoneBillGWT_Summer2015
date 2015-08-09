@@ -24,29 +24,6 @@ import java.util.Collections;
  * @version 5.0
  */
 public class PhoneBill extends AbstractPhoneBill {
-//    private String customer;
-//    private Collection<AbstractPhoneCall> calls = new ArrayList<>();
-//
-//    public PhoneBill() {}
-//
-//    public PhoneBill(String name) {
-//        this.customer = name;
-//    }
-//
-//    @Override
-//    public String getCustomer() {
-//        return customer;
-//    }
-//
-//    @Override
-//    public void addPhoneCall(AbstractPhoneCall call) {
-//        this.calls.add(call);
-//    }
-//
-//    @Override
-//    public Collection getPhoneCalls() {
-//        return this.calls;
-//    }
 
     /**
      * The customer's name. May consist of one or more words,
