@@ -16,5 +16,23 @@ public interface PingServiceAsync {
      */
     void ping(AsyncCallback<AbstractPhoneBill> async);
 
-    void addNewPhoneCall(String customerName, String callerNumber, String calleeNumber, String startTime, String name, AsyncCallback<AbstractPhoneBill> asyncCallback);
+    /**
+     * Return the phone bill containing the newly added phone call record.
+     *
+     * @param customerName  some name
+     * @param callerNumber  phone number of the person who called
+     * @param calleeNumber  phone number of the person who was called
+     * @param startTime     time at which the call began
+     * @param endTime       time at which the call ended
+     * @param asyncCallback the phone bill containing the newly added phone call record
+     */
+    void addNewPhoneCall(String customerName, String callerNumber, String calleeNumber, String startTime, String endTime, AsyncCallback<AbstractPhoneBill> asyncCallback);
+
+    /**
+     * Return the phone bill for the specified customer.
+     *
+     * @param customerName  some name
+     * @param asyncCallback the phone bill that belongs to the specified customer
+     */
+    void printMostRecentlyAddedPhoneCall(String customerName, AsyncCallback<AbstractPhoneBill> asyncCallback);
 }

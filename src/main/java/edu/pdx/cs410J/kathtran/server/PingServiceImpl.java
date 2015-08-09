@@ -7,6 +7,8 @@ import edu.pdx.cs410J.kathtran.client.PhoneCall;
 import edu.pdx.cs410J.kathtran.client.PingService;
 
 import java.lang.Override;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * The server-side implementation of the Phone Bill service
@@ -15,6 +17,8 @@ import java.lang.Override;
  * @version 5.0
  */
 public class PingServiceImpl extends RemoteServiceServlet implements PingService {
+    private Map<String, PhoneBill> data = new HashMap<>();
+
     @Override
     public AbstractPhoneBill ping() {
         PhoneBill phonebill = new PhoneBill();
@@ -26,7 +30,19 @@ public class PingServiceImpl extends RemoteServiceServlet implements PingService
     public AbstractPhoneBill addNewPhoneCall(String customerName, String callerNumber, String calleeNumber, String startTime, String endTime) {
         PhoneBill phoneBill = new PhoneBill(customerName);
         phoneBill.addPhoneCall(new PhoneCall(callerNumber, calleeNumber, startTime, endTime));
-        return phoneBill;
+        data.put(customerName, phoneBill);
+        return data.get(customerName);
+    }
+
+    /**
+     * Prints out the most recently added phone call record in the specified customer's phone bill.
+     *
+     * @param customerName some name
+     * @return the phone bill containing the corresponding phone call record
+     */
+    @Override
+    public AbstractPhoneBill printMostRecentlyAddedPhoneCall(String customerName) {
+        return data.get(customerName);
     }
 
     /**

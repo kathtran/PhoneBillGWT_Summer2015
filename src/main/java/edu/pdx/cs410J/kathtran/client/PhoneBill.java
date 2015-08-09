@@ -149,6 +149,27 @@ public class PhoneBill extends AbstractPhoneBill {
     }
 
     /**
+     * Prints out the most recently added phone call record in the
+     * phone bill in a user-friendly format.
+     *
+     * @return the phone bill with only the most recently added phone call record displayed
+     */
+    public String prettyPrintMostRecentCall() {
+        sortPhoneCalls();
+        String divider = "  ====================";
+        int count = 0;
+        while (count < customer.length()) {
+            divider += "=";
+            count += 1;
+        }
+        String entireBill = "CS410J Phone Bill\n" + divider +
+                "\n  No. of Calls on Record: " + this.phoneCalls.size() +
+                "\n\n  Date(s)\tCaller\t\tCallee\t\tCall Began\tCall Ended\tDuration (mins)";
+        entireBill += this.phoneCalls.get(phoneCalls.size() - 1).prettyPrint();
+        return entireBill;
+    }
+
+    /**
      * An output message for the client to display when a phone call has been added.
      *
      * @param call some phone call
