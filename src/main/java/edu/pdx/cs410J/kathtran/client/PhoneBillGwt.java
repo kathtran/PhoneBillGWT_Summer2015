@@ -193,7 +193,7 @@ public class PhoneBillGwt implements EntryPoint {
 
         // Set up navigation tabs that will operate as menu interface
         TabLayoutPanel navBar = new TabLayoutPanel(2.5, Style.Unit.EM);
-        navBar.add(new HTML("Welcome!"), "Home");
+        navBar.add(homePage(), "Home");
         navBar.add(README, "Help");
         navBar.add(ADD, "Add");
         navBar.add(PRINT, "Print");
@@ -223,12 +223,28 @@ public class PhoneBillGwt implements EntryPoint {
                         break;
                     case 0:
                         Window.alert("Please fill in the entire form!");
+                        addPageCustomerField.setFocus(true);
                         return;
                     case -1:
                         Window.alert("Please enter phone numbers in the correct format");
+                        if (!isValidPhoneNumber(callerNumber))
+                            addPageCallerField.setFocus(true);
+                        else
+                            addPageCalleeField.setFocus(true);
                     case -2:
                     case -3:
                         Window.alert("Please enter times in the correct format");
+                        try {
+                            formatDate(startTime);
+                        } catch (IllegalArgumentException ex) {
+                            addPageStartField.setFocus(true);
+                            return;
+                        }
+                        try {
+                            formatDate(endTime);
+                        } catch (IllegalArgumentException ex) {
+                            addPageEndField.setFocus(true);
+                        }
                     default:
                         return;
                 }
@@ -243,7 +259,7 @@ public class PhoneBillGwt implements EntryPoint {
                     public void onSuccess(AbstractPhoneBill phoneBill) {
                         Window.alert("The call has been added!");
                         PhoneBill bill = (PhoneBill) phoneBill;
-                        addPageOutput.setText("Latest Addition:\n" + bill.callAddedMessage((PhoneCall) bill.getMostRecentPhoneCall()));
+                        addPageOutput.setText(bill.callAddedMessage((PhoneCall) bill.getMostRecentPhoneCall()));
                     }
                 });
             }
@@ -289,6 +305,7 @@ public class PhoneBillGwt implements EntryPoint {
 
                 if (customerName == null || customerName.equals("")) {
                     Window.alert("Please enter a customer name!");
+                    printPageCustomerField1.setFocus(true);
                     return;
                 }
 
@@ -324,6 +341,7 @@ public class PhoneBillGwt implements EntryPoint {
 
                 if (customerName == null || customerName.equals("")) {
                     Window.alert("Please enter a customer name!");
+                    printPageCustomerField2.setFocus(true);
                     return;
                 }
 
@@ -389,10 +407,29 @@ public class PhoneBillGwt implements EntryPoint {
 
                 if (customerName == null || customerName.equals("")) {
                     Window.alert("Please enter a customer name!");
+                    searchPageCustomerField.setFocus(true);
+                    return;
+                } else if (startTime == null || startTime.equals("")) {
+                    Window.alert("Please fill out the starting time field!");
+                    searchAfterField.setFocus(true);
+                    return;
+                } else if (endTime == null || endTime.equals("")) {
+                    Window.alert("Please fill out the ending time field!");
+                    searchBeforeField.setFocus(true);
                     return;
                 }
-                if (startTime == null || startTime.equals("") || endTime == null || endTime.equals("")) {
-                    Window.alert("Please fill out both time fields!");
+                try {
+                    formatDate(startTime);
+                } catch (IllegalArgumentException ex) {
+                    Window.alert("Please enter the starting time in the correct format");
+                    searchAfterField.setFocus(true);
+                    return;
+                }
+                try {
+                    formatDate(endTime);
+                } catch (IllegalArgumentException ex) {
+                    Window.alert("Please enter the ending time in the correct format");
+                    searchBeforeField.setFocus(true);
                     return;
                 }
 
@@ -567,7 +604,7 @@ public class PhoneBillGwt implements EntryPoint {
                 "<p><table width=\"615\"><col width=\"150\"><tr><td colspan=\"2\" align=\"center\">" +
                 "<h1><b>README - Phone Bill Application</b></h1></td></tr>" +
                 "<tr><td><div id=\"introduction\"><h3><u>Introduction</u></h3></div></td></tr>" +
-                "<tr><td valign=\"top\"><b>v1.0</b></td><td>Welcome to the Phone Bill Application! This is a " +
+                "<tr><td valign=\"top\"><b>v1.0</b></td><td>This is a " +
                 "command-line application that allows the user to model a phone bill. In this version, the user " +
                 "may associate at most one phone record per customer name. However, the information will not be " +
                 "stored between each usage. A single phone record consists of the phone number of the caller, the " +
@@ -613,5 +650,16 @@ public class PhoneBillGwt implements EntryPoint {
 
                 "<tr><td colspan=\"2\" align=\"center\"><h5><i>CS410J Project 5: A Rich Internet Application for a Phone Bill</i></h5></td></tr>" +
                 "<tr><td colspan=\"2\" align=\"center\">&copy; Kathleen Tran Summer 2015</td></tr></table></p></body>");
+    }
+
+    /**
+     * Home page welcome message.
+     *
+     * @return welcome message
+     */
+    protected HTML homePage() {
+        return new HTML("Welcome to the CS410J Phone Bill Web Application!" +
+                "<p>Help yourself to the tabs above in the navigation bar to begin using this application.</p>" +
+                "<p><br>Regards,<br>Kathleen Tran</p>");
     }
 }
