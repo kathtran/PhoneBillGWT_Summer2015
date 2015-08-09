@@ -131,7 +131,7 @@ public class PhoneCall extends AbstractPhoneCall implements Comparable<PhoneCall
      */
     @Override
     public String getStartTimeString() {
-        return getDateObject(this.startTime).toString();
+        return DateTimeFormat.getFormat("M/d/yy h:mm a").format(getDateObject(this.startTime));
     }
 
     /**
@@ -140,7 +140,7 @@ public class PhoneCall extends AbstractPhoneCall implements Comparable<PhoneCall
      */
     @Override
     public String getEndTimeString() {
-        return getDateObject(this.endTime).toString();
+        return DateTimeFormat.getFormat("M/d/yy h:mm a").format(getDateObject(this.endTime));
     }
 
     /**
@@ -150,7 +150,7 @@ public class PhoneCall extends AbstractPhoneCall implements Comparable<PhoneCall
      * @return a Date object of the provided date and time
      */
     public Date getDateObject(String dateToGet) {
-        DateTimeFormat dateTimeFormat = DateTimeFormat.getFormat("MM/dd/yy h:mm a");
+        DateTimeFormat dateTimeFormat = DateTimeFormat.getFormat("M/d/yy h:mm a");
         return dateTimeFormat.parseStrict(dateToGet);
     }
 
@@ -256,19 +256,21 @@ public class PhoneCall extends AbstractPhoneCall implements Comparable<PhoneCall
      */
     private String getJustDate(String dateToParse) {
         String[] split = dateToParse.split(" ");
-        DateTimeFormat dateTimeFormat = DateTimeFormat.getFormat("MM/dd/yy");
-        return dateTimeFormat.parseStrict(split[0]).toString();
+        DateTimeFormat dateTimeFormat = DateTimeFormat.getFormat("M/d/yy");
+        Date date = dateTimeFormat.parseStrict(split[0]);
+        return DateTimeFormat.getFormat("M/d/yy").format(date);
     }
 
     /**
      * Get the time from some date and time.
      *
-     * @param dateToParse some date and time
+     * @param timeToParse some date and time
      * @return the time segment
      */
-    private String getJustTime(String dateToParse) {
-        String[] split = dateToParse.split(" ");
+    private String getJustTime(String timeToParse) {
+        String[] split = timeToParse.split(" ");
         DateTimeFormat dateTimeFormat = DateTimeFormat.getFormat("h:mm a");
-        return dateTimeFormat.parseStrict(split[1] + " " + split[2]).toString();
+        Date time = dateTimeFormat.parseStrict(split[1] + split[2]);
+        return DateTimeFormat.getFormat("h:mm a").format(time);
     }
 }

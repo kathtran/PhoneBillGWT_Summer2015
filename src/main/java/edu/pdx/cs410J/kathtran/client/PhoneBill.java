@@ -64,7 +64,8 @@ public class PhoneBill extends AbstractPhoneBill {
     /**
      * Default constructor.
      */
-    public PhoneBill() {}
+    public PhoneBill() {
+    }
 
     /**
      * Constructor that specifies the customer's name.
@@ -114,36 +115,47 @@ public class PhoneBill extends AbstractPhoneBill {
     public Object getMostRecentPhoneCall() throws ArrayIndexOutOfBoundsException {
         return this.phoneCalls.get(phoneCalls.size() - 1);
     }
-//
-//    /**
-//     * Sorts the phone calls in the phone bill by starting time. Ties are
-//     * broken by comparing the callers' phone numbers.
-//     */
-//    public void sortPhoneCalls() {
-//        Collections.sort(this.phoneCalls);
-//    }
-//
-//    /**
-//     * Prints out the phone bill and all of its call records in
-//     * a user-friendly format.
-//     *
-//     * @return the entire phone bill in its new pretty format
-//     */
-//    public String prettyPrint() {
-//        sortPhoneCalls();
-//        String divider = "  ====================";
-//        int count = 0;
-//        while (count < customer.length()) {
-//            divider = divider.concat("=");
-//            count += 1;
-//        }
-//        String entireBill = "CS410J Phone Bill\n" + divider +
-//                "\n  No. of Calls on Record: " + this.phoneCalls.size() +
-//                "\n\n  Date(s)\tCaller\t\tCallee\t\tCall Began\tCall Ended\tDuration (mins)";
-//        for (Object call : getPhoneCalls()) {
-//            PhoneCall phoneCall = (PhoneCall) call;
-//            entireBill = entireBill.concat(phoneCall.prettyPrint());
-//        }
-//        return entireBill;
-//    }
+
+    /**
+     * Sorts the phone calls in the phone bill by starting time. Ties are
+     * broken by comparing the callers' phone numbers.
+     */
+    public void sortPhoneCalls() {
+        Collections.sort(this.phoneCalls);
+    }
+
+    /**
+     * Prints out the phone bill and all of its call records in
+     * a user-friendly format.
+     *
+     * @return the entire phone bill in its new pretty format
+     */
+    public String prettyPrint() {
+        sortPhoneCalls();
+        String divider = "  ====================";
+        int count = 0;
+        while (count < customer.length()) {
+            divider += "=";
+            count += 1;
+        }
+        String entireBill = "CS410J Phone Bill\n" + divider +
+                "\n  No. of Calls on Record: " + this.phoneCalls.size() +
+                "\n\n  Date(s)\tCaller\t\tCallee\t\tCall Began\tCall Ended\tDuration (mins)";
+        for (Object call : getPhoneCalls()) {
+            PhoneCall phoneCall = (PhoneCall) call;
+            entireBill += phoneCall.prettyPrint();
+        }
+        return entireBill;
+    }
+
+    /**
+     * An output message for the client to display when a phone call has been added.
+     *
+     * @param call some phone call
+     * @return the message notifying that the specified phone call has been added to
+     * its respective customer's phone bill
+     */
+    public String callAddedMessage(PhoneCall call) {
+        return call.toString() + " has been added to " + customer + "'s phone bill!";
+    }
 }
