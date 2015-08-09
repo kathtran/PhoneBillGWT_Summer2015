@@ -15,7 +15,6 @@ import com.google.gwt.user.client.ui.Button;
 import edu.pdx.cs410J.AbstractPhoneBill;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -56,6 +55,15 @@ public class PhoneBillGwt implements EntryPoint {
     private Button printBillButton;
     private Button printAllButton;
 
+    private final VerticalPanel SEARCH = new VerticalPanel();
+    private final HorizontalPanel searchHPan1 = new HorizontalPanel();
+    private final HorizontalPanel searchHPan2 = new HorizontalPanel();
+    private final ScrollPanel searchPageOutput = new ScrollPanel();
+    private TextBox searchPageCustomerField;
+    private TextBox searchAfterField;
+    private TextBox searchBeforeField;
+    private Button searchButton;
+
     private String customerName;
     private String callerNumber;
     private String calleeNumber;
@@ -68,7 +76,6 @@ public class PhoneBillGwt implements EntryPoint {
 
         // <------- BUILDING ADD PAGE ------->
         loadAddPageLayout();
-        ADD.getElement().getStyle().setBorderStyle(Style.BorderStyle.NONE);
         ADD.add(new HTML("<table width=\"615px\"><tr><td align=\"center\"><h1>Add a Phone Call</h1></td></tr></table>"));
 
         addHPan1.add(new Label("Customer Name"));
@@ -120,7 +127,6 @@ public class PhoneBillGwt implements EntryPoint {
 
         // <------- BUILDING PRINT PAGE ------->
         loadPrintPageLayout();
-        PRINT.getElement().getStyle().setBorderStyle(Style.BorderStyle.NONE);
         PRINT.add(new HTML("<table width=\"615px\"><tr><td align=\"center\"><h1>Printing Phone Calls and Bills</h1></td></tr></table>"));
 
         printHPan1.add(new Label("Most Recently Added Phone Call"));
@@ -157,6 +163,35 @@ public class PhoneBillGwt implements EntryPoint {
         // <------- END PRINT PAGE ------->
 
         // <------- BUILDING SEARCH PAGE ------->
+        loadSearchPageLayout();
+        SEARCH.add(new HTML("<table width=\"615px\"><tr><td align=\"center\"><h1>Search for Calls</h1></td></tr></table>"));
+
+        searchHPan1.add(new Label("Customer Name"));
+        searchHPan1.add(searchPageCustomerField = new TextBox());
+        searchPageCustomerField.setPixelSize(500, 15);
+        searchPageCustomerField.setMaxLength(60);
+        searchPageCustomerField.getElement().setAttribute("placeholder", "kathtran");
+
+        searchHPan2.add(new Label("Between"));
+        searchHPan2.add(searchAfterField = new TextBox());
+        searchAfterField.setPixelSize(200, 15);
+        searchAfterField.setMaxLength(19);
+        searchAfterField.getElement().setAttribute("placeholder", "ex. 1/1/2015 12:00 am");
+        searchHPan2.add(new Label("and"));
+        searchHPan2.add(searchBeforeField = new TextBox());
+        searchBeforeField.setMaxLength(19);
+        searchBeforeField.setPixelSize(200, 15);
+        searchBeforeField.getElement().setAttribute("placeholder", "ex. 2/20/2015 2:00 pm");
+        searchHPan2.add(searchButton = new Button("Search"));
+
+        searchButton.setPixelSize(75, 25);
+
+        SEARCH.add(searchHPan1);
+        SEARCH.add(searchHPan2);
+        SEARCH.add(pageDivider = new HTML("<table width=\"615\"><tr height=\"50\"><td><hr width=\"90%\"></td></tr></table>"));
+        SEARCH.add(addPageOutput);
+
+//        searchButton.addClickHandler(searchForCalls());
 
         // <------- END SEARCH PAGE ------->
 
@@ -182,8 +217,6 @@ public class PhoneBillGwt implements EntryPoint {
 //                });
 //            }
 //        });
-//
-//        ADD.add(pingServerButton);
 
         // Set up navigation tabs that will operate as menu interface
         TabLayoutPanel navBar = new TabLayoutPanel(2.5, Style.Unit.EM);
@@ -191,7 +224,7 @@ public class PhoneBillGwt implements EntryPoint {
         navBar.add(README, "Help");
         navBar.add(ADD, "Add");
         navBar.add(PRINT, "Print");
-//        navBar.add(SEARCH, "Search");
+        navBar.add(SEARCH, "Search");
 
         rootLayoutPanel.add(navBar);
     }
@@ -458,7 +491,11 @@ public class PhoneBillGwt implements EntryPoint {
         return dateTimeFormat.parseStrict(dateTimeInput).toString();
     }
 
+    /**
+     * Sets up basic Widget sizes and alignments for the ADD page.
+     */
     private void loadAddPageLayout() {
+        ADD.getElement().getStyle().setBorderStyle(Style.BorderStyle.NONE);
         ADD.setSize("615px", "400px");
 
         addHPan1.setSize("615px", "100%");
@@ -482,7 +519,11 @@ public class PhoneBillGwt implements EntryPoint {
         addPageOutput.setPixelSize(615, 50);
     }
 
+    /**
+     * Sets up basic Widget sizes and alignments for the PRINT page.
+     */
     private void loadPrintPageLayout() {
+        PRINT.getElement().getStyle().setBorderStyle(Style.BorderStyle.NONE);
         PRINT.setSize("615px", "100%");
 
         printHPan1.setSize("615px", "100%");
@@ -494,6 +535,23 @@ public class PhoneBillGwt implements EntryPoint {
         printPageBillOutput.getElement().getStyle().setBorderStyle(Style.BorderStyle.NONE);
         printPageBillOutput.setPixelSize(615, 250);
         printPageCallOutput.setPixelSize(615, 75);
+    }
+
+    /**
+     * Sets up basic Widget sizes and alignments for the SEARCH page.
+     */
+    private void loadSearchPageLayout() {
+        SEARCH.getElement().getStyle().setBorderStyle(Style.BorderStyle.NONE);
+        SEARCH.setSize("615px", "400px");
+
+        searchHPan1.setSize("615px", "100%");
+        searchHPan2.setSize("615px", "100%");
+
+        searchHPan1.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
+        searchHPan2.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
+
+        searchPageOutput.getElement().getStyle().setBorderStyle(Style.BorderStyle.NONE);
+        searchPageOutput.setPixelSize(615, 300);
     }
 
     /**
