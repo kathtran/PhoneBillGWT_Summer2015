@@ -159,7 +159,6 @@ public class PhoneBillGwt implements EntryPoint {
         printCallButton.addClickHandler(printMostRecentlyAddedPhoneCall());
         printBillButton.addClickHandler(printPhoneBill());
         printAllButton.addClickHandler(printAllPhoneBills());
-//        printAllButton.addClickHandler(printAllPhoneBills());
         // <------- END PRINT PAGE ------->
 
         // <------- BUILDING SEARCH PAGE ------->
@@ -191,31 +190,8 @@ public class PhoneBillGwt implements EntryPoint {
         SEARCH.add(pageDivider = new HTML("<table width=\"615\"><tr height=\"50\"><td><hr width=\"90%\"></td></tr></table>"));
         SEARCH.add(addPageOutput);
 
-//        searchButton.addClickHandler(searchForCalls());
+        searchButton.addClickHandler(searchForCalls());
         // <------- END SEARCH PAGE ------->
-
-//        Button pingServerButton = new Button("Ping Server");
-//        pingServerButton.addClickHandler(new ClickHandler() {
-//            public void onClick(ClickEvent clickEvent) {
-//                PingServiceAsync async = GWT.create(PingService.class);
-//                async.ping(new AsyncCallback<AbstractPhoneBill>() {
-//
-//                    public void onFailure(Throwable ex) {
-//                        Window.alert(ex.toString());
-//                    }
-//
-//                    public void onSuccess(AbstractPhoneBill phonebill) {
-//                        StringBuilder sb = new StringBuilder(phonebill.toString());
-//                        Collection<AbstractPhoneCall> calls = phonebill.getPhoneCalls();
-//                        for (AbstractPhoneCall call : calls) {
-//                            sb.append(call);
-//                            sb.append("\n");
-//                        }
-//                        Window.alert(sb.toString());
-//                    }
-//                });
-//            }
-//        });
 
         // Set up navigation tabs that will operate as menu interface
         TabLayoutPanel navBar = new TabLayoutPanel(2.5, Style.Unit.EM);
@@ -399,6 +375,21 @@ public class PhoneBillGwt implements EntryPoint {
                         } else printPageBillOutput.add(new HTML("No phone bills currently exist --"));
                     }
                 });
+            }
+        };
+    }
+
+    /**
+     * <------- SEARCH PAGE ------->
+     * Prints out all phone calls belonging to the specified customer between the given time frame.
+     *
+     * @return handled click event for the Search button
+     */
+    private ClickHandler searchForCalls() {
+        return new ClickHandler() {
+            @Override
+            public void onClick(ClickEvent clickEvent) {
+
             }
         };
     }
