@@ -19,9 +19,23 @@ import java.util.Map;
 public class PingServiceImpl extends RemoteServiceServlet implements PingService {
     private Map<String, PhoneBill> data = new HashMap<>();
 
+    /**
+     * Adds a phone call.
+     *
+     * @param customerName some name
+     * @param callerNumber phone number of the person who called
+     * @param calleeNumber phone number of the person who was called
+     * @param startTime    time at which the call began
+     * @param endTime      time at which the call ended
+     * @return phone bill with the newly added phone call.
+     */
     @Override
     public AbstractPhoneBill addNewPhoneCall(String customerName, String callerNumber, String calleeNumber, String startTime, String endTime) {
-        PhoneBill phoneBill = new PhoneBill(customerName);
+        PhoneBill phoneBill;
+        if (!data.containsKey(customerName))
+            phoneBill = new PhoneBill(customerName);
+        else
+            phoneBill = data.get(customerName);
         phoneBill.addPhoneCall(new PhoneCall(callerNumber, calleeNumber, startTime, endTime));
         data.put(customerName, phoneBill);
         return data.get(customerName);

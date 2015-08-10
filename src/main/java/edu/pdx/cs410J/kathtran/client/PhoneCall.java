@@ -240,6 +240,12 @@ public class PhoneCall extends AbstractPhoneCall implements Comparable<PhoneCall
         return call;
     }
 
+    public String getDateInterval() {
+        if (getJustDate(this.startTime).equals(getJustDate(this.endTime)))
+            return getJustDate(this.startTime);
+        return getJustDate(this.startTime) + "-" + getJustDate(this.endTime);
+    }
+
     /**
      * Get the date from some date and time.
      *
@@ -259,7 +265,7 @@ public class PhoneCall extends AbstractPhoneCall implements Comparable<PhoneCall
      * @param timeToParse some date and time
      * @return the time segment
      */
-    private String getJustTime(String timeToParse) {
+    public String getJustTime(String timeToParse) {
         String[] split = timeToParse.split(" ");
         DateTimeFormat dateTimeFormat = DateTimeFormat.getFormat("h:mm a");
         Date time = dateTimeFormat.parseStrict(split[1] + split[2]);

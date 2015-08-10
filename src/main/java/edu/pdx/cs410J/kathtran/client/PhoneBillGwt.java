@@ -8,6 +8,7 @@ import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.regexp.shared.MatchResult;
 import com.google.gwt.regexp.shared.RegExp;
+import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.*;
@@ -42,7 +43,7 @@ public class PhoneBillGwt implements EntryPoint {
 
     private final VerticalPanel PRINT = new VerticalPanel();
     private final HorizontalPanel printHPan1 = new HorizontalPanel();
-    private final Label printPageOutput = new Label("");
+    private final ScrollPanel printPageOutput = new ScrollPanel();
     private TextBox printPageCustomerField;
 
     private final VerticalPanel SEARCH = new VerticalPanel();
@@ -236,9 +237,9 @@ public class PhoneBillGwt implements EntryPoint {
 
                     @Override
                     public void onSuccess(AbstractPhoneBill phoneBill) {
-                        Window.alert("The call has been added!");
                         PhoneBill bill = (PhoneBill) phoneBill;
                         addPageOutput.setText(bill.callAddedMessage((PhoneCall) bill.getMostRecentPhoneCall()));
+                        Window.alert("The call has been added!");
                     }
                 });
             }
@@ -286,6 +287,7 @@ public class PhoneBillGwt implements EntryPoint {
 
                 if (customerName == null || customerName.equals("")) {
                     Window.alert("Please enter a customer name!");
+                    printPageOutput.clear();
                     printPageCustomerField.setFocus(true);
                     return;
                 }
@@ -298,10 +300,16 @@ public class PhoneBillGwt implements EntryPoint {
 
                     @Override
                     public void onSuccess(AbstractPhoneBill phoneBill) {
-                        if (phoneBill != null)
-                            printPageOutput.setText(((PhoneBill) phoneBill).prettyPrint());
-                        else
-                            printPageOutput.setText("Customer could not be found --");
+                        if (phoneBill != null) {
+                            PhoneBill bill = (PhoneBill) phoneBill;
+                            HTML test = prettyPrint(bill);
+                            printPageOutput.clear();
+                            printPageOutput.add(new HTML(String.valueOf(test)));
+                            Window.alert("Printed!");
+                        } else {
+                            printPageOutput.clear();
+                            printPageOutput.add(new HTML("Customer could not be found --"));
+                        }
                     }
                 });
             }
@@ -575,5 +583,25 @@ public class PhoneBillGwt implements EntryPoint {
         return new HTML("Welcome to the CS410J Phone Bill Web Application!" +
                 "<p>Help yourself to the tabs above in the navigation bar to begin using this application.</p>" +
                 "<p><br>Regards,<br>Kathleen Tran</p>");
+    }
+
+    /**
+     * Prints out the phone bill and all of its call records in
+     * a user-friendly format.
+     *
+     * @return the entire phone bill in its new pretty format
+     */
+    public HTML prettyPrint(PhoneBill phoneBill) {
+        return new HTML("<table width=\"615\"><colspan=\"6\"><col width=\"100\"><tr><td><b>CUSTOMER</b></td><td>" + phoneBill.getCustomer() +
+                "</td><td><b>NO. OF CALLS</b></td><td>" + phoneBill.getPhoneCalls().size() + "</td><td></td><td></td></tr>" +
+                "<tr><td><b>DATE</b></td><td><b>CALLER</b></td><td><b>CALLEE</b></td><td><b>CALL BEGAN</b></td><td><b>CALL ENDED</b></td><td><b>DURATION (MINS)</b></td></tr>" +
+                "</table>");
+    }
+
+    private HTML prettyCall(PhoneCall call) {
+        return new HTML("<table width=\"615\"><colspan=\"6\"><col width=\"100\"><tr><td>" + call.getDateInterval() + "</td>" +
+                "<td>" + call.getCaller() + "</td><td>" + call.getCallee() + "</td><td>" + call.getJustTime(call.getStartTimeString()) + "</td><td>" +
+                call.getJustTime(call.getEndTimeString()) + "</td><td>" + call.getCallDuration() + "</td></tr>" +
+                "</table>");
     }
 }

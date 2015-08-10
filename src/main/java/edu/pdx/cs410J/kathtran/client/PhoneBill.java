@@ -107,18 +107,18 @@ public class PhoneBill extends AbstractPhoneBill {
      *
      * @return the entire phone bill in its new pretty format
      */
-    public String prettyPrint() {
-        sortPhoneCalls();
+    public String prettyPrint(PhoneBill phoneBill) {
+        phoneBill.sortPhoneCalls();
         String divider = "  ====================";
         int count = 0;
-        while (count < customer.length()) {
+        while (count < phoneBill.getCustomer().length()) {
             divider += "=";
             count += 1;
         }
-        String entireBill = customer + "'s CS410J Phone Bill\n" + divider +
-                "\n  No. of Calls on Record: " + this.phoneCalls.size() +
+        String entireBill = phoneBill.getCustomer() + "'s CS410J Phone Bill\n" + divider +
+                "\n  No. of Calls on Record: " + phoneBill.getPhoneCalls().size() +
                 "\n\n  Date(s)\tCaller\t\tCallee\t\tCall Began\tCall Ended\tDuration (mins)";
-        for (Object call : getPhoneCalls()) {
+        for (Object call : phoneBill.getPhoneCalls()) {
             PhoneCall phoneCall = (PhoneCall) call;
             entireBill += phoneCall.prettyPrint();
         }
@@ -131,17 +131,18 @@ public class PhoneBill extends AbstractPhoneBill {
      *
      * @return the phone bill with only the most recently added phone call record displayed
      */
-    public String prettyPrintMostRecentCall() {
+    public String prettyPrintMostRecentCall(PhoneBill phoneBill) {
         String divider = "  ====================";
         int count = 0;
-        while (count < customer.length()) {
+        while (count < phoneBill.getCustomer().length()) {
             divider += "=";
             count += 1;
         }
-        String entireBill = customer + "'s CS410J Phone Bill\n" + divider +
-                "\n  No. of Calls on Record: " + this.phoneCalls.size() +
+        String entireBill = phoneBill.getCustomer() + "'s CS410J Phone Bill\n" + divider +
+                "\n  No. of Calls on Record: " + phoneBill.getPhoneCalls().size() +
                 "\n\n  Date(s)\tCaller\t\tCallee\t\tCall Began\tCall Ended\tDuration (mins)";
-        entireBill += this.phoneCalls.get(phoneCalls.size() - 1).prettyPrint();
+        PhoneCall call = (PhoneCall) phoneBill.getMostRecentPhoneCall();
+        entireBill += call.prettyPrint();
         return entireBill;
     }
 
