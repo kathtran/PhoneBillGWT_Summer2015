@@ -115,7 +115,7 @@ public class PhoneBill extends AbstractPhoneBill {
             divider += "=";
             count += 1;
         }
-        String entireBill = "CS410J Phone Bill\n" + divider +
+        String entireBill = customer + "'s CS410J Phone Bill\n" + divider +
                 "\n  No. of Calls on Record: " + this.phoneCalls.size() +
                 "\n\n  Date(s)\tCaller\t\tCallee\t\tCall Began\tCall Ended\tDuration (mins)";
         for (Object call : getPhoneCalls()) {
@@ -132,14 +132,13 @@ public class PhoneBill extends AbstractPhoneBill {
      * @return the phone bill with only the most recently added phone call record displayed
      */
     public String prettyPrintMostRecentCall() {
-        sortPhoneCalls();
         String divider = "  ====================";
         int count = 0;
         while (count < customer.length()) {
             divider += "=";
             count += 1;
         }
-        String entireBill = "CS410J Phone Bill\n" + divider +
+        String entireBill = customer + "'s CS410J Phone Bill\n" + divider +
                 "\n  No. of Calls on Record: " + this.phoneCalls.size() +
                 "\n\n  Date(s)\tCaller\t\tCallee\t\tCall Began\tCall Ended\tDuration (mins)";
         entireBill += this.phoneCalls.get(phoneCalls.size() - 1).prettyPrint();
@@ -155,5 +154,9 @@ public class PhoneBill extends AbstractPhoneBill {
      */
     public String callAddedMessage(PhoneCall call) {
         return call.toString() + " has been added to " + customer + "'s phone bill!";
+    }
+
+    public String test(PhoneBill bill) {
+        return bill.prettyPrint();
     }
 }

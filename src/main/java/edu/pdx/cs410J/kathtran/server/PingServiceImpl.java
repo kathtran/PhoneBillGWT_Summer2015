@@ -28,19 +28,6 @@ public class PingServiceImpl extends RemoteServiceServlet implements PingService
     }
 
     /**
-     * Prints out the most recently added phone call record in the specified customer's phone bill.
-     *
-     * @param customerName some name
-     * @return the phone bill containing the corresponding phone call record
-     */
-    @Override
-    public AbstractPhoneBill printMostRecentlyAddedPhoneCall(String customerName) {
-        if (data.get(customerName) != null)
-            return data.get(customerName);
-        return null;
-    }
-
-    /**
      * Prints out the contents of the entire phone bill for the specified customer.
      *
      * @param customerName some name
@@ -50,24 +37,6 @@ public class PingServiceImpl extends RemoteServiceServlet implements PingService
     public AbstractPhoneBill printPhoneBill(String customerName) {
         if (data.get(customerName) != null)
             return data.get(customerName);
-        return null;
-    }
-
-    /**
-     * Prints out all phone bill records on file.
-     *
-     * @return the mapping that contains all customers and their phone bills.
-     */
-    @Override
-    public String printAllPhoneBills() {
-        String allPhoneBills = "";
-        if (!data.isEmpty()) {
-            for (Map.Entry<String, PhoneBill> phoneBill : data.entrySet()) {
-                PhoneBill bill = (PhoneBill) phoneBill;
-                allPhoneBills += bill.prettyPrint();
-            }
-            return allPhoneBills;
-        }
         return null;
     }
 

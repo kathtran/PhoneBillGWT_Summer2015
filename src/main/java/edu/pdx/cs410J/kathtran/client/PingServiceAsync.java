@@ -29,22 +29,7 @@ public interface PingServiceAsync {
      * @param customerName  some name
      * @param asyncCallback the phone bill that belongs to the specified customer
      */
-    void printMostRecentlyAddedPhoneCall(String customerName, AsyncCallback<AbstractPhoneBill> asyncCallback);
-
-    /**
-     * Return the phone bill for the specified customer.
-     *
-     * @param customerName  some name
-     * @param asyncCallback the phone bill that belongs to the specified customer
-     */
     void printPhoneBill(String customerName, AsyncCallback<AbstractPhoneBill> asyncCallback);
-
-    /**
-     * Return all phone bills.
-     *
-     * @param asyncCallback a String containing all phone bills on record, pretty printed
-     */
-    void printAllPhoneBills(AsyncCallback<String> asyncCallback);
 
     /**
      * Return all phone calls that began during the specified time frame for the specified customer.
@@ -54,5 +39,5 @@ public interface PingServiceAsync {
      * @param searchBefore  the upper bound to search for calls in
      * @param asyncCallback a String containing all qualifying phone call records, pretty printed
      */
-    void searchForCalls(String customerName, String searchAfter, String searchBefore, AsyncCallback<String> asyncCallback);
+    void searchForCalls(String customerName, String searchAfter, String searchBefore, AsyncCallback<java.lang.String> asyncCallback);
 }
