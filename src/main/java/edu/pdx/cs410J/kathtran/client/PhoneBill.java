@@ -19,6 +19,8 @@ import java.util.Collections;
  * nicely formats the phone bill and its corresponding phone calls.
  * <p>
  * v4.0 UPDATE: Minor edits to the formatting of the pretty print method.
+ * <p>
+ * v5.0 UPDATE: Pretty Print has been replaced by Simple Print.
  *
  * @author Kathleen Tran
  * @version 5.0
@@ -107,42 +109,22 @@ public class PhoneBill extends AbstractPhoneBill {
      *
      * @return the entire phone bill in its new pretty format
      */
+    @Deprecated
     public String prettyPrint() {
-        sortPhoneCalls();
+        this.sortPhoneCalls();
         String divider = "  ====================";
         int count = 0;
         while (count < customer.length()) {
             divider += "=";
             count += 1;
         }
-        String entireBill = "CS410J Phone Bill\n" + divider +
-                "\n  No. of Calls on Record: " + this.phoneCalls.size() +
+        String entireBill = customer + "'s CS410J Phone Bill\n" + divider +
+                "\n  No. of Calls on Record: " + this.getPhoneCalls().size() +
                 "\n\n  Date(s)\tCaller\t\tCallee\t\tCall Began\tCall Ended\tDuration (mins)";
-        for (Object call : getPhoneCalls()) {
+        for (Object call : this.getPhoneCalls()) {
             PhoneCall phoneCall = (PhoneCall) call;
             entireBill += phoneCall.prettyPrint();
         }
-        return entireBill;
-    }
-
-    /**
-     * Prints out the most recently added phone call record in the
-     * phone bill in a user-friendly format.
-     *
-     * @return the phone bill with only the most recently added phone call record displayed
-     */
-    public String prettyPrintMostRecentCall() {
-        sortPhoneCalls();
-        String divider = "  ====================";
-        int count = 0;
-        while (count < customer.length()) {
-            divider += "=";
-            count += 1;
-        }
-        String entireBill = "CS410J Phone Bill\n" + divider +
-                "\n  No. of Calls on Record: " + this.phoneCalls.size() +
-                "\n\n  Date(s)\tCaller\t\tCallee\t\tCall Began\tCall Ended\tDuration (mins)";
-        entireBill += this.phoneCalls.get(phoneCalls.size() - 1).prettyPrint();
         return entireBill;
     }
 
@@ -155,5 +137,15 @@ public class PhoneBill extends AbstractPhoneBill {
      */
     public String callAddedMessage(PhoneCall call) {
         return call.toString() + " has been added to " + customer + "'s phone bill!";
+    }
+
+    /**
+     * Revised and condensed version of Pretty Print for GWT.
+     *
+     * @return customer name and phone call count, formatted simply
+     */
+    public String toSimple() {
+        return "<b>CUSTOMER:</b> " + customer + "&nbsp;&nbsp;&nbsp;&nbsp;" +
+                "<b>NO. OF CALLS:</b> " + this.getPhoneCalls().size() + "<br>";
     }
 }

@@ -19,25 +19,26 @@ import java.util.Map;
 public class PingServiceImpl extends RemoteServiceServlet implements PingService {
     private Map<String, PhoneBill> data = new HashMap<>();
 
+    /**
+     * Adds a phone call.
+     *
+     * @param customerName some name
+     * @param callerNumber phone number of the person who called
+     * @param calleeNumber phone number of the person who was called
+     * @param startTime    time at which the call began
+     * @param endTime      time at which the call ended
+     * @return phone bill with the newly added phone call.
+     */
     @Override
     public AbstractPhoneBill addNewPhoneCall(String customerName, String callerNumber, String calleeNumber, String startTime, String endTime) {
-        PhoneBill phoneBill = new PhoneBill(customerName);
+        PhoneBill phoneBill;
+        if (!data.containsKey(customerName))
+            phoneBill = new PhoneBill(customerName);
+        else
+            phoneBill = data.get(customerName);
         phoneBill.addPhoneCall(new PhoneCall(callerNumber, calleeNumber, startTime, endTime));
         data.put(customerName, phoneBill);
         return data.get(customerName);
-    }
-
-    /**
-     * Prints out the most recently added phone call record in the specified customer's phone bill.
-     *
-     * @param customerName some name
-     * @return the phone bill containing the corresponding phone call record
-     */
-    @Override
-    public AbstractPhoneBill printMostRecentlyAddedPhoneCall(String customerName) {
-        if (data.get(customerName) != null)
-            return data.get(customerName);
-        return null;
     }
 
     /**
@@ -50,24 +51,6 @@ public class PingServiceImpl extends RemoteServiceServlet implements PingService
     public AbstractPhoneBill printPhoneBill(String customerName) {
         if (data.get(customerName) != null)
             return data.get(customerName);
-        return null;
-    }
-
-    /**
-     * Prints out all phone bill records on file.
-     *
-     * @return the mapping that contains all customers and their phone bills.
-     */
-    @Override
-    public String printAllPhoneBills() {
-        String allPhoneBills = "";
-        if (!data.isEmpty()) {
-            for (Map.Entry<String, PhoneBill> phoneBill : data.entrySet()) {
-                PhoneBill bill = (PhoneBill) phoneBill;
-                allPhoneBills += bill.prettyPrint();
-            }
-            return allPhoneBills;
-        }
         return null;
     }
 

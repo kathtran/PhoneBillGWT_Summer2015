@@ -20,7 +20,8 @@ import java.util.Date;
  * parse a single String to create a new PhoneCall object.
  * <p>
  * v5.0 UPDATE: Cleaned up a lot of the code and Date-related methods
- * are now implemented using the GWT DateTimeFormat class.
+ * are now implemented using the GWT DateTimeFormat class. Pretty Print
+ * is no longer used, instead it has been replaced with Simple Print.
  *
  * @author Kathleen Tran
  * @version 5.0
@@ -220,6 +221,7 @@ public class PhoneCall extends AbstractPhoneCall implements Comparable<PhoneCall
      *
      * @return aesthetically pleasing phone call description
      */
+    @Deprecated
     public String prettyPrint() {
         boolean displayOneDate = false;
         if (getJustDate(this.startTime).equals(getJustDate(this.endTime)))
@@ -238,6 +240,12 @@ public class PhoneCall extends AbstractPhoneCall implements Comparable<PhoneCall
         if (!displayOneDate)
             call += "  " + getJustDate(this.endTime) + "\n";
         return call;
+    }
+
+    public String getDateInterval() {
+        if (getJustDate(this.startTime).equals(getJustDate(this.endTime)))
+            return getJustDate(this.startTime);
+        return getJustDate(this.startTime) + "-" + getJustDate(this.endTime);
     }
 
     /**
@@ -259,10 +267,20 @@ public class PhoneCall extends AbstractPhoneCall implements Comparable<PhoneCall
      * @param timeToParse some date and time
      * @return the time segment
      */
-    private String getJustTime(String timeToParse) {
+    public String getJustTime(String timeToParse) {
         String[] split = timeToParse.split(" ");
         DateTimeFormat dateTimeFormat = DateTimeFormat.getFormat("h:mm a");
         Date time = dateTimeFormat.parseStrict(split[1] + split[2]);
         return DateTimeFormat.getFormat("h:mm a").format(time);
+    }
+
+    /**
+     * Revised and condensed version of Pretty Print for GWT.
+     *
+     * @return phone call record, formatted simply
+     */
+    public String toSimple() {
+        return "@<b>" + this.getStartTimeString() + "</b> - " + getJustDate(this.getEndTimeString()) + " call from " +
+                callerNumber + " to " + calleeNumber + " that lasted " + getCallDuration() + " minutes.<br>";
     }
 }

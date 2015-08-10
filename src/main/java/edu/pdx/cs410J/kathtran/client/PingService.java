@@ -26,27 +26,12 @@ public interface PingService extends RemoteService {
     AbstractPhoneBill addNewPhoneCall(String customerName, String callerNumber, String calleeNumber, String startTime, String endTime);
 
     /**
-     * Prints out the most recently added phone call record in the specified customer's phone bill.
-     *
-     * @param customerName some name
-     * @return the phone bill containing the corresponding phone call record
-     */
-    AbstractPhoneBill printMostRecentlyAddedPhoneCall(String customerName);
-
-    /**
      * Prints out the contents of the entire phone bill for the specified customer.
      *
      * @param customerName some name
      * @return the phone bill that belongs to the specified customer
      */
-    AbstractPhoneBill printPhoneBill(String customerName);
-
-    /**
-     * Prints out all phone bill records on file.
-     *
-     * @return a String containing all phone bills, pretty printed
-     */
-    String printAllPhoneBills();
+    public AbstractPhoneBill printPhoneBill(String customerName);
 
     /**
      * Prints out all calls that began during the specified time frame for the specified customer.
@@ -56,5 +41,5 @@ public interface PingService extends RemoteService {
      * @param searchBefore the upper bound to search for calls in
      * @return a String containing all qualifying phone calls, pretty printed
      */
-    String searchForCalls(String customerName, String searchAfter, String searchBefore);
+    public String searchForCalls(String customerName, String searchAfter, String searchBefore);
 }

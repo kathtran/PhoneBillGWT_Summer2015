@@ -1,5 +1,6 @@
 package edu.pdx.cs410J.kathtran.client;
 
+import com.google.gwt.cell.client.TextCell;
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style;
@@ -8,6 +9,7 @@ import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.regexp.shared.MatchResult;
 import com.google.gwt.regexp.shared.RegExp;
+import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.*;
@@ -42,16 +44,13 @@ public class PhoneBillGwt implements EntryPoint {
 
     private final VerticalPanel PRINT = new VerticalPanel();
     private final HorizontalPanel printHPan1 = new HorizontalPanel();
-    private final HorizontalPanel printHPan2 = new HorizontalPanel();
-    private final ScrollPanel printPageBillOutput = new ScrollPanel();
-    private final Label printPageCallOutput = new Label("");
-    private TextBox printPageCustomerField1;
-    private TextBox printPageCustomerField2;
+    private final ScrollPanel printPageOutput = new ScrollPanel();
+    private TextBox printPageCustomerField;
 
     private final VerticalPanel SEARCH = new VerticalPanel();
     private final HorizontalPanel searchHPan1 = new HorizontalPanel();
     private final HorizontalPanel searchHPan2 = new HorizontalPanel();
-    private final ScrollPanel searchPageOutput = new ScrollPanel();
+    private final Label searchPageOutput = new Label("");
     private TextBox searchPageCustomerField;
     private TextBox searchAfterField;
     private TextBox searchBeforeField;
@@ -123,39 +122,21 @@ public class PhoneBillGwt implements EntryPoint {
         loadPrintPageLayout();
         PRINT.add(new HTML("<table width=\"615px\"><tr><td align=\"center\"><h1>Printing Phone Calls and Bills</h1></td></tr></table>"));
 
-        printHPan1.add(new Label("Most Recently Added Phone Call"));
-        printHPan1.add(printPageCustomerField1 = new TextBox());
-        printPageCustomerField1.setPixelSize(300, 15);
-        printPageCustomerField1.setMaxLength(60);
-        printPageCustomerField1.getElement().setAttribute("placeholder", "kathtran");
-
-        Button printCallButton;
-        printHPan1.add(printCallButton = new Button("Print"));
-
-        printHPan2.add(new Label("Phone Bill"));
-        printHPan2.add(printPageCustomerField2 = new TextBox());
-        printPageCustomerField2.setPixelSize(250, 15);
-        printPageCustomerField2.setMaxLength(60);
-        printPageCustomerField2.getElement().setAttribute("placeholder", "kathtran");
+        printHPan1.add(new Label("Phone Bill"));
+        printHPan1.add(printPageCustomerField = new TextBox());
+        printPageCustomerField.setPixelSize(250, 15);
+        printPageCustomerField.setMaxLength(60);
+        printPageCustomerField.getElement().setAttribute("placeholder", "kathtran");
         Button printBillButton;
-        printHPan2.add(printBillButton = new Button("Print One"));
-        Button printAllButton;
-        printHPan2.add(printAllButton = new Button("Print All"));
+        printHPan1.add(printBillButton = new Button("Print One"));
 
-        printCallButton.setPixelSize(50, 25);
         printBillButton.setPixelSize(75, 25);
-        printAllButton.setPixelSize(75, 25);
 
         PRINT.add(printHPan1);
         PRINT.add(new HTML("<table width=\"615\"><tr height=\"50\"><td><hr width=\"90%\"></td></tr></table>"));
-        PRINT.add(printPageCallOutput);
-        PRINT.add(printHPan2);
-        PRINT.add(new HTML("<table width=\"615\"><tr height=\"50\"><td><hr width=\"90%\"></td></tr></table>"));
-        PRINT.add(printPageBillOutput);
+        PRINT.add(printPageOutput);
 
-        printCallButton.addClickHandler(printMostRecentlyAddedPhoneCall());
         printBillButton.addClickHandler(printPhoneBill());
-        printAllButton.addClickHandler(printAllPhoneBills());
         // <------- END PRINT PAGE ------->
 
         // <------- BUILDING SEARCH PAGE ------->
@@ -186,7 +167,7 @@ public class PhoneBillGwt implements EntryPoint {
         SEARCH.add(searchHPan1);
         SEARCH.add(searchHPan2);
         SEARCH.add(new HTML("<table width=\"615\"><tr height=\"50\"><td><hr width=\"90%\"></td></tr></table>"));
-        SEARCH.add(addPageOutput);
+        SEARCH.add(searchPageOutput);
 
         searchButton.addClickHandler(searchForCalls());
         // <------- END SEARCH PAGE ------->
@@ -257,9 +238,9 @@ public class PhoneBillGwt implements EntryPoint {
 
                     @Override
                     public void onSuccess(AbstractPhoneBill phoneBill) {
-                        Window.alert("The call has been added!");
                         PhoneBill bill = (PhoneBill) phoneBill;
                         addPageOutput.setText(bill.callAddedMessage((PhoneCall) bill.getMostRecentPhoneCall()));
+                        Window.alert("The call has been added!");
                     }
                 });
             }
@@ -287,42 +268,8 @@ public class PhoneBillGwt implements EntryPoint {
                 addPageCalleeField.setText("");
                 addPageStartField.setText("");
                 addPageEndField.setText("");
-            }
-        };
-    }
 
-    /**
-     * <------- PRINT PAGE ------->
-     * Prints out the most recently added phone call.
-     *
-     * @return handled click event for the Print button
-     */
-    private ClickHandler printMostRecentlyAddedPhoneCall() {
-        return new ClickHandler() {
-            @Override
-            public void onClick(ClickEvent clickEvent) {
-                customerName = printPageCustomerField1.getText();
-
-                if (customerName == null || customerName.equals("")) {
-                    Window.alert("Please enter a customer name!");
-                    printPageCustomerField1.setFocus(true);
-                    return;
-                }
-
-                async.printMostRecentlyAddedPhoneCall(customerName, new AsyncCallback<AbstractPhoneBill>() {
-                    @Override
-                    public void onFailure(Throwable throwable) {
-                        Window.alert(throwable.toString());
-                    }
-
-                    @Override
-                    public void onSuccess(AbstractPhoneBill phoneBill) {
-                        if (phoneBill != null) {
-                            PhoneBill bill = (PhoneBill) phoneBill;
-                            printPageCallOutput.setText(bill.prettyPrintMostRecentCall());
-                        } else printPageCallOutput.setText("Customer could not be found --");
-                    }
-                });
+                addPageOutput.setText("");
             }
         };
     }
@@ -337,11 +284,12 @@ public class PhoneBillGwt implements EntryPoint {
         return new ClickHandler() {
             @Override
             public void onClick(ClickEvent clickEvent) {
-                customerName = printPageCustomerField2.getText();
+                customerName = printPageCustomerField.getText();
 
                 if (customerName == null || customerName.equals("")) {
                     Window.alert("Please enter a customer name!");
-                    printPageCustomerField2.setFocus(true);
+                    printPageOutput.clear();
+                    printPageCustomerField.setFocus(true);
                     return;
                 }
 
@@ -353,38 +301,19 @@ public class PhoneBillGwt implements EntryPoint {
 
                     @Override
                     public void onSuccess(AbstractPhoneBill phoneBill) {
-                        if (phoneBill != null)
-                            printPageBillOutput.add(new HTML(((PhoneBill) phoneBill).prettyPrint()));
-                        else
-                            printPageBillOutput.add(new HTML("Customer could not be found --"));
-                    }
-                });
-            }
-        };
-    }
-
-    /**
-     * <------- PRINT PAGE ------->
-     * Prints out all of the phone bills that have been stored for the session.
-     *
-     * @return handled click event for the Print All button
-     */
-    private ClickHandler printAllPhoneBills() {
-        return new ClickHandler() {
-            @Override
-            public void onClick(ClickEvent clickEvent) {
-                async.printAllPhoneBills(new AsyncCallback<String>() {
-                    @Override
-                    public void onFailure(Throwable throwable) {
-                        Window.alert(throwable.toString());
-                    }
-
-                    @Override
-                    public void onSuccess(String allPhoneBills) {
-                        if (allPhoneBills != null)
-                            printPageBillOutput.add(new HTML(allPhoneBills));
-                        else
-                            printPageBillOutput.add(new HTML("No phone bills currently exist --"));
+                        if (phoneBill != null) {
+                            PhoneBill bill = (PhoneBill) phoneBill;
+                            bill.sortPhoneCalls();
+                            String toPrint = bill.toSimple();
+                            for (Object call : bill.getPhoneCalls())
+                                toPrint += ((PhoneCall)call).toSimple();
+                            printPageOutput.clear();
+                            printPageOutput.add(new HTML(toPrint));
+                            Window.alert("The phone bill has been printed!");
+                        } else {
+                            printPageOutput.clear();
+                            printPageOutput.add(new HTML("Customer could not be found --"));
+                        }
                     }
                 });
             }
@@ -433,7 +362,7 @@ public class PhoneBillGwt implements EntryPoint {
                     return;
                 }
 
-                async.searchForCalls(customerName, startTime, endTime, new AsyncCallback<String>() {
+                async.searchForCalls(customerName, startTime, endTime, new AsyncCallback<java.lang.String>() {
                     @Override
                     public void onFailure(Throwable throwable) {
                         Window.alert(throwable.toString());
@@ -442,9 +371,9 @@ public class PhoneBillGwt implements EntryPoint {
                     @Override
                     public void onSuccess(String searchResults) {
                         if (searchResults != null)
-                            searchPageOutput.add(new HTML(searchResults));
+                            searchPageOutput.setText(searchResults);
                         else
-                            searchPageOutput.add(new HTML("No phone calls found --"));
+                            searchPageOutput.setText("No phone calls found --");
                     }
                 });
             }
@@ -567,14 +496,11 @@ public class PhoneBillGwt implements EntryPoint {
         PRINT.setSize("615px", "100%");
 
         printHPan1.setSize("615px", "100%");
-        printHPan2.setSize("615px", "100%");
 
         printHPan1.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
-        printHPan2.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
 
-        printPageBillOutput.getElement().getStyle().setBorderStyle(Style.BorderStyle.NONE);
-        printPageBillOutput.setPixelSize(615, 250);
-        printPageCallOutput.setPixelSize(615, 75);
+        printPageOutput.getElement().getStyle().setBorderStyle(Style.BorderStyle.NONE);
+        printPageOutput.setSize("100%", "100%");
     }
 
     /**
@@ -661,5 +587,34 @@ public class PhoneBillGwt implements EntryPoint {
         return new HTML("Welcome to the CS410J Phone Bill Web Application!" +
                 "<p>Help yourself to the tabs above in the navigation bar to begin using this application.</p>" +
                 "<p><br>Regards,<br>Kathleen Tran</p>");
+    }
+
+    /**
+     * Prints out the phone bill and all of its call records in
+     * a user-friendly format.
+     *
+     * @return the entire phone bill in its new pretty format
+     */
+    public String prettyPrint(PhoneBill phoneBill) {
+//        String calls = null;
+//        for (Object phoneCall : phoneBill.getPhoneCalls()) {
+//            PhoneCall call = (PhoneCall) phoneCall;
+//            calls += "<tr><td>" + call.getDateInterval() + "</td>" +
+//                    "<td>" + call.getCaller() + "</td><td>" + call.getCallee() + "</td><td>" + call.getJustTime(call.getStartTimeString()) + "</td><td>" +
+//                    call.getJustTime(call.getEndTimeString()) + "</td><td>" + call.getCallDuration() + "</td></tr>";
+//        }
+//        String tableLayout = "<table width=\"615\"><colspan=\"6\"><col width=\"100\"><tr><td><b>CUSTOMER</b></td><td>" + phoneBill.getCustomer() +
+//                "</td><td><b>NO. OF CALLS</b></td><td>" + phoneBill.getPhoneCalls().size() + "</td><td></td><td></td></tr>" +
+//                "<tr><td><b>DATE</b></td><td><b>CALLER</b></td><td><b>CALLEE</b></td><td><b>CALL BEGAN</b></td><td><b>CALL ENDED</b></td><td><b>DURATION (MINS)</b></td></tr>";
+////                "<tr><td>" + phoneBill.getMostRecentPhoneCall().toString() + "</td></td>" +
+//        tableLayout += calls;
+//        tableLayout += "</table>";
+        return phoneBill.prettyPrint();
+    }
+
+    private String prettyCall(PhoneCall call) {
+        return "<tr><td>" + call.getDateInterval() + "</td>" +
+                "<td>" + call.getCaller() + "</td><td>" + call.getCallee() + "</td><td>" + call.getJustTime(call.getStartTimeString()) + "</td><td>" +
+                call.getJustTime(call.getEndTimeString()) + "</td><td>" + call.getCallDuration() + "</td></tr>";
     }
 }
