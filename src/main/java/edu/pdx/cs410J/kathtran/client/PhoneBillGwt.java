@@ -432,7 +432,7 @@ public class PhoneBillGwt implements EntryPoint {
                             for (Object phoneCall : bill.getPhoneCalls()) {
                                 call = (PhoneCall) phoneCall;
                                 lowerTimeBoundResult = call.compareTime(call.getStartTimeString(), call.getShortDateFormat(startTime));
-                                upperTimeBoundResult = call.compareTime(call.getEndTimeString(), call.getShortDateFormat(endTime));
+                                upperTimeBoundResult = call.compareTime(call.getStartTimeString(), call.getShortDateFormat(endTime));
                                 if ((lowerTimeBoundResult == 0 || lowerTimeBoundResult == 1) && (upperTimeBoundResult == 0 || upperTimeBoundResult == -1)) {
                                     toPrint += call.toSimple();
                                     atLeastOneSearchResult = true;
@@ -630,14 +630,14 @@ public class PhoneBillGwt implements EntryPoint {
                 "has been implemented to support all previous features associated with this phone bill " +
                 "application.</td></tr>" +
 
-                "<tr><td colspan=\"2\"><div id=\"functionalities\"><h3><u>Functionalities</u></h3></div></td></tr>" +
+                "<tr><td colspan=\"2\"><div id=\"features\"><h3><u>Features</u></h3></div></td></tr>" +
                 "<tr><td valign=\"top\"><b>Add</b></td><td>Add a new phone call to some specified " +
                 "customer's phone bill by supplying the customer name, caller number, callee number, call start " +
                 "time, and call end time.</td></tr>" +
-                "<tr><td valign=\"top\"><b>Print</b></td><td>Choose from two options: (1) print the most recently added phone " +
-                "call, or (2) print all of the phone call records that belong to some specified customer.</td></tr>" +
-                "<tr><td valign=\"top\"><b>Search</b></td><td>Search for all existing phone call records that fall under " +
-                "some starting time and some ending time.</td></tr>" +
+                "<tr><td valign=\"top\"><b>Print</b></td><td>Choose from two options: (1) print the phone bill belonging to " +
+                "the the specified customer, or (2) print all of the currently existing phone bill records.</td></tr>" +
+                "<tr><td valign=\"top\"><b>Search</b></td><td>Search for all existing phone call records that started between " +
+                "some starting time and some ending time for some specified customer.</td></tr>" +
 
                 "<tr><td colspan=\"2\"><div id=\"arguments\"><h3><u>Arguments</u></h3></div></td></tr>" +
                 "<tr><td valign=\"top\"><b>[customer]</b></td><td valign=\"top\">Person whose phone bill we're modelling</td></tr>" +
