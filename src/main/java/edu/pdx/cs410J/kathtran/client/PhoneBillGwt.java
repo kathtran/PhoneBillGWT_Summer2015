@@ -15,6 +15,7 @@ import com.google.gwt.user.client.ui.Button;
 import edu.pdx.cs410J.AbstractPhoneBill;
 
 import java.util.ArrayList;
+import java.util.Map;
 
 /**
  * A basic GWT class that makes sure that we can send an Phone Bill back from the server
@@ -44,6 +45,7 @@ public class PhoneBillGwt implements EntryPoint {
     private final HorizontalPanel printHPan1 = new HorizontalPanel();
     private final ScrollPanel printPageOutput = new ScrollPanel();
     private TextBox printPageCustomerField;
+    private Button printAllButton;
 
     private final VerticalPanel SEARCH = new VerticalPanel();
     private final HorizontalPanel searchHPan1 = new HorizontalPanel();
@@ -132,14 +134,18 @@ public class PhoneBillGwt implements EntryPoint {
         printPageCustomerField.getElement().setAttribute("placeholder", "kathtran");
         Button printBillButton;
         printHPan1.add(printBillButton = new Button("Print One"));
+        printHPan1.add(printAllButton = new Button("Print All"));
+        printAllButton.setEnabled(false);
 
         printBillButton.setPixelSize(75, 25);
+        printAllButton.setPixelSize(75, 25);
 
         PRINT.add(printHPan1);
         PRINT.add(new HTML("<table width=\"615\"><tr height=\"50\"><td><hr width=\"90%\"></td></tr></table>"));
         PRINT.add(printPageOutput);
 
         printBillButton.addClickHandler(printPhoneBill());
+        printAllButton.addClickHandler(printAllBills());
         // <------- END PRINT PAGE ------->
 
         // <------- BUILDING SEARCH PAGE ------->
@@ -244,6 +250,7 @@ public class PhoneBillGwt implements EntryPoint {
                         PhoneBill bill = (PhoneBill) phoneBill;
                         addPageOutput.setText(bill.callAddedMessage((PhoneCall) bill.getMostRecentPhoneCall()));
                         Window.alert("The call has been added!");
+                        printAllButton.setEnabled(true);
                     }
                 });
             }
@@ -313,8 +320,48 @@ public class PhoneBillGwt implements EntryPoint {
                                 toPrint += ((PhoneCall) phoneCall).toSimple();
                             printPageOutput.add(new HTML(toPrint));
                             Window.alert("The phone bill has been printed!");
+                            printAllButton.setEnabled(true);
                         } else {
-                            printPageOutput.add(new HTML("Customer could not be found --"));
+                            Window.alert("Customer could not be found!");
+                            printPageOutput.add(new HTML("No records to be displayed --"));
+                        }
+                    }
+                });
+            }
+        };
+    }
+
+    /**
+     * <------- PRINT PAGE ------->
+     * Prints out all existing phone bills.
+     *
+     * @return handled click event for the Print All button
+     */
+    private ClickHandler printAllBills() {
+        return new ClickHandler() {
+            @Override
+            public void onClick(ClickEvent clickEvent) {
+                async.printAllBills(new AsyncCallback<Map<String, PhoneBill>>() {
+                    @Override
+                    public void onFailure(Throwable throwable) {
+                        Window.alert(throwable.toString());
+                    }
+
+                    @Override
+                    public void onSuccess(Map<String, PhoneBill> mapping) {
+                        printPageOutput.clear();
+                        String toPrint = null;
+                        if (!mapping.isEmpty()) {
+                            for (Map.Entry<String, PhoneBill> entry : mapping.entrySet()) {
+                                toPrint += entry.getValue().toSimple();
+                                for (Object phoneCall : entry.getValue().getPhoneCalls())
+                                    toPrint += ((PhoneCall) phoneCall).toSimple();
+                            }
+                            printPageOutput.add(new HTML(toPrint != null ? toPrint.substring(4) : "No phone bills found --"));
+                            Window.alert("All phone bills have been printed!");
+                        } else {
+                            Window.alert("No phone bills currently exist!");
+                            printPageOutput.add(new HTML("No records to be displayed --"));
                         }
                     }
                 });
@@ -398,8 +445,11 @@ public class PhoneBillGwt implements EntryPoint {
                                 toPrint += "No calls exist between the designated times --";
                                 searchPageOutput.add(new HTML(toPrint));
                             }
-                        } else
-                            searchPageOutput.add(new HTML("Customer could not be found --"));
+                            printAllButton.setEnabled(true);
+                        } else {
+                            Window.alert("Customer could not be found!");
+                            searchPageOutput.add(new HTML("No records to be displayed --"));
+                        }
                     }
                 });
             }

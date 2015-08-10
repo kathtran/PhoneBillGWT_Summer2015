@@ -55,6 +55,18 @@ public class PingServiceImpl extends RemoteServiceServlet implements PingService
     }
 
     /**
+     * Prints out all existing phone bills on record.
+     *
+     * @return all customers and their corresponding phone bills
+     */
+    @Override
+    public Map<String, PhoneBill> printAllBills() {
+        if (!data.isEmpty())
+            return data;
+        return null;
+    }
+
+    /**
      * Prints out all calls that began within the specified time frame for the specified customer.
      *
      * @param customerName some name
