@@ -1,6 +1,5 @@
 package edu.pdx.cs410J.kathtran.client;
 
-import com.google.gwt.cell.client.TextCell;
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style;
@@ -9,7 +8,6 @@ import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.regexp.shared.MatchResult;
 import com.google.gwt.regexp.shared.RegExp;
-import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.*;
@@ -50,7 +48,7 @@ public class PhoneBillGwt implements EntryPoint {
     private final VerticalPanel SEARCH = new VerticalPanel();
     private final HorizontalPanel searchHPan1 = new HorizontalPanel();
     private final HorizontalPanel searchHPan2 = new HorizontalPanel();
-    private final Label searchPageOutput = new Label("");
+    private final ScrollPanel searchPageOutput = new ScrollPanel();
     private TextBox searchPageCustomerField;
     private TextBox searchAfterField;
     private TextBox searchBeforeField;
@@ -60,6 +58,11 @@ public class PhoneBillGwt implements EntryPoint {
     private String calleeNumber;
     private String startTime;
     private String endTime;
+
+    // For SEARCH page
+    private int lowerTimeBoundResult;
+    private int upperTimeBoundResult;
+    private boolean atLeastOneSearchResult = false;
 
     private final PingServiceAsync async = GWT.create(PingService.class);
 
@@ -301,17 +304,16 @@ public class PhoneBillGwt implements EntryPoint {
 
                     @Override
                     public void onSuccess(AbstractPhoneBill phoneBill) {
+                        printPageOutput.clear();
                         if (phoneBill != null) {
                             PhoneBill bill = (PhoneBill) phoneBill;
                             bill.sortPhoneCalls();
                             String toPrint = bill.toSimple();
-                            for (Object call : bill.getPhoneCalls())
-                                toPrint += ((PhoneCall)call).toSimple();
-                            printPageOutput.clear();
+                            for (Object phoneCall : bill.getPhoneCalls())
+                                toPrint += ((PhoneCall) phoneCall).toSimple();
                             printPageOutput.add(new HTML(toPrint));
                             Window.alert("The phone bill has been printed!");
                         } else {
-                            printPageOutput.clear();
                             printPageOutput.add(new HTML("Customer could not be found --"));
                         }
                     }
@@ -336,14 +338,17 @@ public class PhoneBillGwt implements EntryPoint {
 
                 if (customerName == null || customerName.equals("")) {
                     Window.alert("Please enter a customer name!");
+                    searchPageOutput.clear();
                     searchPageCustomerField.setFocus(true);
                     return;
                 } else if (startTime == null || startTime.equals("")) {
                     Window.alert("Please fill out the starting time field!");
+                    searchPageOutput.clear();
                     searchAfterField.setFocus(true);
                     return;
                 } else if (endTime == null || endTime.equals("")) {
                     Window.alert("Please fill out the ending time field!");
+                    searchPageOutput.clear();
                     searchBeforeField.setFocus(true);
                     return;
                 }
@@ -351,6 +356,7 @@ public class PhoneBillGwt implements EntryPoint {
                     formatDate(startTime);
                 } catch (IllegalArgumentException ex) {
                     Window.alert("Please enter the starting time in the correct format");
+                    searchPageOutput.clear();
                     searchAfterField.setFocus(true);
                     return;
                 }
@@ -358,22 +364,42 @@ public class PhoneBillGwt implements EntryPoint {
                     formatDate(endTime);
                 } catch (IllegalArgumentException ex) {
                     Window.alert("Please enter the ending time in the correct format");
+                    searchPageOutput.clear();
                     searchBeforeField.setFocus(true);
                     return;
                 }
 
-                async.searchForCalls(customerName, startTime, endTime, new AsyncCallback<java.lang.String>() {
+                async.searchForCalls(customerName, startTime, endTime, new AsyncCallback<AbstractPhoneBill>() {
                     @Override
                     public void onFailure(Throwable throwable) {
                         Window.alert(throwable.toString());
                     }
 
                     @Override
-                    public void onSuccess(String searchResults) {
-                        if (searchResults != null)
-                            searchPageOutput.setText(searchResults);
-                        else
-                            searchPageOutput.setText("No phone calls found --");
+                    public void onSuccess(AbstractPhoneBill phoneBill) {
+                        searchPageOutput.clear();
+                        if (phoneBill != null) {
+                            PhoneBill bill = (PhoneBill) phoneBill;
+                            String toPrint = bill.toSimple();
+                            PhoneCall call;
+                            for (Object phoneCall : bill.getPhoneCalls()) {
+                                call = (PhoneCall) phoneCall;
+                                lowerTimeBoundResult = call.compareTime(call.getStartTimeString(), call.getShortDateFormat(startTime));
+                                upperTimeBoundResult = call.compareTime(call.getEndTimeString(), call.getShortDateFormat(endTime));
+                                if ((lowerTimeBoundResult == 0 || lowerTimeBoundResult == 1) && (upperTimeBoundResult == 0 || upperTimeBoundResult == -1)) {
+                                    toPrint += call.toSimple();
+                                    atLeastOneSearchResult = true;
+                                }
+                            }
+                            if (atLeastOneSearchResult) {
+                                searchPageOutput.add(new HTML(toPrint));
+                                Window.alert("Calls found!");
+                            } else {
+                                toPrint += "No calls exist between the designated times --";
+                                searchPageOutput.add(new HTML(toPrint));
+                            }
+                        } else
+                            searchPageOutput.add(new HTML("Customer could not be found --"));
                     }
                 });
             }
@@ -508,7 +534,7 @@ public class PhoneBillGwt implements EntryPoint {
      */
     private void loadSearchPageLayout() {
         SEARCH.getElement().getStyle().setBorderStyle(Style.BorderStyle.NONE);
-        SEARCH.setSize("615px", "400px");
+        SEARCH.setSize("615px", "100%");
 
         searchHPan1.setSize("615px", "100%");
         searchHPan2.setSize("615px", "100%");
@@ -587,34 +613,5 @@ public class PhoneBillGwt implements EntryPoint {
         return new HTML("Welcome to the CS410J Phone Bill Web Application!" +
                 "<p>Help yourself to the tabs above in the navigation bar to begin using this application.</p>" +
                 "<p><br>Regards,<br>Kathleen Tran</p>");
-    }
-
-    /**
-     * Prints out the phone bill and all of its call records in
-     * a user-friendly format.
-     *
-     * @return the entire phone bill in its new pretty format
-     */
-    public String prettyPrint(PhoneBill phoneBill) {
-//        String calls = null;
-//        for (Object phoneCall : phoneBill.getPhoneCalls()) {
-//            PhoneCall call = (PhoneCall) phoneCall;
-//            calls += "<tr><td>" + call.getDateInterval() + "</td>" +
-//                    "<td>" + call.getCaller() + "</td><td>" + call.getCallee() + "</td><td>" + call.getJustTime(call.getStartTimeString()) + "</td><td>" +
-//                    call.getJustTime(call.getEndTimeString()) + "</td><td>" + call.getCallDuration() + "</td></tr>";
-//        }
-//        String tableLayout = "<table width=\"615\"><colspan=\"6\"><col width=\"100\"><tr><td><b>CUSTOMER</b></td><td>" + phoneBill.getCustomer() +
-//                "</td><td><b>NO. OF CALLS</b></td><td>" + phoneBill.getPhoneCalls().size() + "</td><td></td><td></td></tr>" +
-//                "<tr><td><b>DATE</b></td><td><b>CALLER</b></td><td><b>CALLEE</b></td><td><b>CALL BEGAN</b></td><td><b>CALL ENDED</b></td><td><b>DURATION (MINS)</b></td></tr>";
-////                "<tr><td>" + phoneBill.getMostRecentPhoneCall().toString() + "</td></td>" +
-//        tableLayout += calls;
-//        tableLayout += "</table>";
-        return phoneBill.prettyPrint();
-    }
-
-    private String prettyCall(PhoneCall call) {
-        return "<tr><td>" + call.getDateInterval() + "</td>" +
-                "<td>" + call.getCaller() + "</td><td>" + call.getCallee() + "</td><td>" + call.getJustTime(call.getStartTimeString()) + "</td><td>" +
-                call.getJustTime(call.getEndTimeString()) + "</td><td>" + call.getCallDuration() + "</td></tr>";
     }
 }
