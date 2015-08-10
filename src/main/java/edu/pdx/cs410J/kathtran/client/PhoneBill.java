@@ -155,8 +155,4 @@ public class PhoneBill extends AbstractPhoneBill {
     public String callAddedMessage(PhoneCall call) {
         return call.toString() + " has been added to " + customer + "'s phone bill!";
     }
-
-    public String test(PhoneBill bill) {
-        return bill.prettyPrint();
-    }
 }

@@ -42,13 +42,13 @@ public class PhoneBillGwt implements EntryPoint {
 
     private final VerticalPanel PRINT = new VerticalPanel();
     private final HorizontalPanel printHPan1 = new HorizontalPanel();
-    private final ScrollPanel printPageOutput = new ScrollPanel();
+    private final Label printPageOutput = new Label("");
     private TextBox printPageCustomerField;
 
     private final VerticalPanel SEARCH = new VerticalPanel();
     private final HorizontalPanel searchHPan1 = new HorizontalPanel();
     private final HorizontalPanel searchHPan2 = new HorizontalPanel();
-    private final ScrollPanel searchPageOutput = new ScrollPanel();
+    private final Label searchPageOutput = new Label("");
     private TextBox searchPageCustomerField;
     private TextBox searchAfterField;
     private TextBox searchBeforeField;
@@ -165,7 +165,7 @@ public class PhoneBillGwt implements EntryPoint {
         SEARCH.add(searchHPan1);
         SEARCH.add(searchHPan2);
         SEARCH.add(new HTML("<table width=\"615\"><tr height=\"50\"><td><hr width=\"90%\"></td></tr></table>"));
-        SEARCH.add(addPageOutput);
+        SEARCH.add(searchPageOutput);
 
         searchButton.addClickHandler(searchForCalls());
         // <------- END SEARCH PAGE ------->
@@ -266,6 +266,8 @@ public class PhoneBillGwt implements EntryPoint {
                 addPageCalleeField.setText("");
                 addPageStartField.setText("");
                 addPageEndField.setText("");
+
+                addPageOutput.setText("");
             }
         };
     }
@@ -297,9 +299,9 @@ public class PhoneBillGwt implements EntryPoint {
                     @Override
                     public void onSuccess(AbstractPhoneBill phoneBill) {
                         if (phoneBill != null)
-                            printPageOutput.add(new HTML(((PhoneBill) phoneBill).prettyPrint()));
+                            printPageOutput.setText(((PhoneBill) phoneBill).prettyPrint());
                         else
-                            printPageOutput.add(new HTML("Customer could not be found --"));
+                            printPageOutput.setText("Customer could not be found --");
                     }
                 });
             }
@@ -348,7 +350,7 @@ public class PhoneBillGwt implements EntryPoint {
                     return;
                 }
 
-                async.searchForCalls(customerName, startTime, endTime, new AsyncCallback<String>() {
+                async.searchForCalls(customerName, startTime, endTime, new AsyncCallback<java.lang.String>() {
                     @Override
                     public void onFailure(Throwable throwable) {
                         Window.alert(throwable.toString());
@@ -357,9 +359,9 @@ public class PhoneBillGwt implements EntryPoint {
                     @Override
                     public void onSuccess(String searchResults) {
                         if (searchResults != null)
-                            searchPageOutput.add(new HTML(searchResults));
+                            searchPageOutput.setText(searchResults);
                         else
-                            searchPageOutput.add(new HTML("No phone calls found --"));
+                            searchPageOutput.setText("No phone calls found --");
                     }
                 });
             }
