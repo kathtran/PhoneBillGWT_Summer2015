@@ -145,7 +145,7 @@ public class PhoneBill extends AbstractPhoneBill {
      * @return customer name and phone call count, formatted simply
      */
     public String toSimple() {
-        return "<b>CUSTOMER:</b> " + customer + "&nbsp;&nbsp;&nbsp;&nbsp;" +
-                "<b>NO. OF CALLS:</b> " + this.getPhoneCalls().size() + "<br>";
+        return "<b>CUSTOMER:</b> " + customer + "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" +
+                "<b>NO. OF CALLS ON RECORD:</b> " + this.getPhoneCalls().size() + "<p>";
     }
 }

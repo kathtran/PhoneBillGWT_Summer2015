@@ -31,7 +31,7 @@ public interface PingService extends RemoteService {
      * @param customerName some name
      * @return the phone bill that belongs to the specified customer
      */
-    public AbstractPhoneBill printPhoneBill(String customerName);
+    AbstractPhoneBill printPhoneBill(String customerName);
 
     /**
      * Prints out all calls that began during the specified time frame for the specified customer.
@@ -39,7 +39,7 @@ public interface PingService extends RemoteService {
      * @param customerName some name
      * @param searchAfter  the lower bound to search for calls in
      * @param searchBefore the upper bound to search for calls in
-     * @return a String containing all qualifying phone calls, pretty printed
+     * @return the phone bill that belongs to the specified customer
      */
-    public String searchForCalls(String customerName, String searchAfter, String searchBefore);
+    AbstractPhoneBill searchForCalls(String customerName, String searchAfter, String searchBefore);
 }

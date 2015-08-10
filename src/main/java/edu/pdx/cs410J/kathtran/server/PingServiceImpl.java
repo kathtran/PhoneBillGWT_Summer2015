@@ -60,31 +60,12 @@ public class PingServiceImpl extends RemoteServiceServlet implements PingService
      * @param customerName some name
      * @param searchAfter  the lower bound to search for calls in
      * @param searchBefore the upper bound to search for calls in
-     * @return a String containing all qualifying phone calls, pretty printed
+     * @return the phone bill that belongs to the specified customer
      */
     @Override
-    public String searchForCalls(String customerName, String searchAfter, String searchBefore) {
-        String searchResults = "";
-        PhoneCall call;
-        int after;
-        int before;
-        boolean atLeastOneExists = false;
-        for (Map.Entry<String, PhoneBill> phoneBill : data.entrySet()) {
-            if (phoneBill.getKey().equals(customerName)) {
-                searchResults += phoneBill.getKey();
-                for (Object phoneCall : phoneBill.getValue().getPhoneCalls()) {
-                    call = (PhoneCall) phoneCall;
-                    after = call.compareTime(call.getStartTimeString(), call.getShortDateFormat(searchAfter));
-                    before = call.compareTime(call.getEndTimeString(), call.getShortDateFormat(searchBefore));
-                    if ((after == 0 || after == 1) && (before == 0 || before == -1)) {
-                        searchResults += call.prettyPrint();
-                        atLeastOneExists = true;
-                    }
-                }
-            }
-        }
-        if (!atLeastOneExists)
-            return searchResults;
+    public AbstractPhoneBill searchForCalls(String customerName, String searchAfter, String searchBefore) {
+        if (data.get(customerName) != null)
+            return data.get(customerName);
         return null;
     }
 

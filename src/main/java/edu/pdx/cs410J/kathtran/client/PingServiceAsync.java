@@ -39,5 +39,5 @@ public interface PingServiceAsync {
      * @param searchBefore  the upper bound to search for calls in
      * @param asyncCallback a String containing all qualifying phone call records, pretty printed
      */
-    void searchForCalls(String customerName, String searchAfter, String searchBefore, AsyncCallback<java.lang.String> asyncCallback);
+    void searchForCalls(String customerName, String searchAfter, String searchBefore, AsyncCallback<AbstractPhoneBill> asyncCallback);
 }
