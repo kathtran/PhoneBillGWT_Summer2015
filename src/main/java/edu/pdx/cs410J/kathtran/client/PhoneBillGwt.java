@@ -1,5 +1,6 @@
 package edu.pdx.cs410J.kathtran.client;
 
+import com.google.gwt.cell.client.TextCell;
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style;
@@ -302,10 +303,13 @@ public class PhoneBillGwt implements EntryPoint {
                     public void onSuccess(AbstractPhoneBill phoneBill) {
                         if (phoneBill != null) {
                             PhoneBill bill = (PhoneBill) phoneBill;
-                            HTML test = prettyPrint(bill);
+                            bill.sortPhoneCalls();
+                            String toPrint = bill.toSimple();
+                            for (Object call : bill.getPhoneCalls())
+                                toPrint += ((PhoneCall)call).toSimple();
                             printPageOutput.clear();
-                            printPageOutput.add(new HTML(String.valueOf(test)));
-                            Window.alert("Printed!");
+                            printPageOutput.add(new HTML(toPrint));
+                            Window.alert("The phone bill has been printed!");
                         } else {
                             printPageOutput.clear();
                             printPageOutput.add(new HTML("Customer could not be found --"));
@@ -496,7 +500,7 @@ public class PhoneBillGwt implements EntryPoint {
         printHPan1.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
 
         printPageOutput.getElement().getStyle().setBorderStyle(Style.BorderStyle.NONE);
-        printPageOutput.setPixelSize(615, 250);
+        printPageOutput.setSize("100%", "100%");
     }
 
     /**
@@ -591,17 +595,26 @@ public class PhoneBillGwt implements EntryPoint {
      *
      * @return the entire phone bill in its new pretty format
      */
-    public HTML prettyPrint(PhoneBill phoneBill) {
-        return new HTML("<table width=\"615\"><colspan=\"6\"><col width=\"100\"><tr><td><b>CUSTOMER</b></td><td>" + phoneBill.getCustomer() +
-                "</td><td><b>NO. OF CALLS</b></td><td>" + phoneBill.getPhoneCalls().size() + "</td><td></td><td></td></tr>" +
-                "<tr><td><b>DATE</b></td><td><b>CALLER</b></td><td><b>CALLEE</b></td><td><b>CALL BEGAN</b></td><td><b>CALL ENDED</b></td><td><b>DURATION (MINS)</b></td></tr>" +
-                "</table>");
+    public String prettyPrint(PhoneBill phoneBill) {
+//        String calls = null;
+//        for (Object phoneCall : phoneBill.getPhoneCalls()) {
+//            PhoneCall call = (PhoneCall) phoneCall;
+//            calls += "<tr><td>" + call.getDateInterval() + "</td>" +
+//                    "<td>" + call.getCaller() + "</td><td>" + call.getCallee() + "</td><td>" + call.getJustTime(call.getStartTimeString()) + "</td><td>" +
+//                    call.getJustTime(call.getEndTimeString()) + "</td><td>" + call.getCallDuration() + "</td></tr>";
+//        }
+//        String tableLayout = "<table width=\"615\"><colspan=\"6\"><col width=\"100\"><tr><td><b>CUSTOMER</b></td><td>" + phoneBill.getCustomer() +
+//                "</td><td><b>NO. OF CALLS</b></td><td>" + phoneBill.getPhoneCalls().size() + "</td><td></td><td></td></tr>" +
+//                "<tr><td><b>DATE</b></td><td><b>CALLER</b></td><td><b>CALLEE</b></td><td><b>CALL BEGAN</b></td><td><b>CALL ENDED</b></td><td><b>DURATION (MINS)</b></td></tr>";
+////                "<tr><td>" + phoneBill.getMostRecentPhoneCall().toString() + "</td></td>" +
+//        tableLayout += calls;
+//        tableLayout += "</table>";
+        return phoneBill.prettyPrint();
     }
 
-    private HTML prettyCall(PhoneCall call) {
-        return new HTML("<table width=\"615\"><colspan=\"6\"><col width=\"100\"><tr><td>" + call.getDateInterval() + "</td>" +
+    private String prettyCall(PhoneCall call) {
+        return "<tr><td>" + call.getDateInterval() + "</td>" +
                 "<td>" + call.getCaller() + "</td><td>" + call.getCallee() + "</td><td>" + call.getJustTime(call.getStartTimeString()) + "</td><td>" +
-                call.getJustTime(call.getEndTimeString()) + "</td><td>" + call.getCallDuration() + "</td></tr>" +
-                "</table>");
+                call.getJustTime(call.getEndTimeString()) + "</td><td>" + call.getCallDuration() + "</td></tr>";
     }
 }
