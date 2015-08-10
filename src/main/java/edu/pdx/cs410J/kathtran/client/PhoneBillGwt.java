@@ -18,7 +18,10 @@ import java.util.ArrayList;
 import java.util.Map;
 
 /**
- * A basic GWT class that makes sure that we can send an Phone Bill back from the server
+ * A GWT class that operates as the entry point for the Phone Bill Web
+ * Application. All page layouts are implemented here. This file also
+ * handles all communications between the client and server sides of
+ * the application.
  *
  * @author Kathleen Tran
  * @version 5.0

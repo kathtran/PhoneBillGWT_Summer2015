@@ -11,7 +11,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * The server-side implementation of the Phone Bill service.
+ * The server-side implementation of the ping service.
  *
  * @author Kathleen Tran
  * @version 5.0
